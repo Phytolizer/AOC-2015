@@ -11,9 +11,10 @@ fn main() {
     let mut robo_santa = (0, 0);
     let mut mover = Mover::Santa;
     let mut visited = HashSet::<(i32, i32)>::new();
-    visited.insert(santa);
+    visited.insert(coords);
     let mut nvisited = 1;
     let mut visited_2 = HashSet::<(i32, i32)>::new();
+    visited_2.insert(santa);
     let mut nvisited_2 = 0;
     let text = std::fs::read_to_string("input.txt").unwrap();
     for c in text.chars() {
