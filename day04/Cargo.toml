@@ -1,0 +1,9 @@
+[package]
+name = "day04"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+
+[dependencies]
+md-5 = "0.10.0"
