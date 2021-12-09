@@ -1,3 +1,4 @@
+#include <advent.hpp>
 #include <fstream>
 #include <iostream>
 
@@ -12,7 +13,7 @@ int main()
     {
         throw std::runtime_error{"Failed to open input.txt"};
     }
-    while (inf >> c)
+    ADVENT_FOREACH_CHAR(inf, c)
     {
         switch (c)
         {
@@ -21,7 +22,8 @@ int main()
             break;
         case ')':
             --floor;
-            if (!indexFound && floor < 0) {
+            if (!indexFound && floor < 0)
+            {
                 std::cout << "Part 2: " << index << "\n";
                 indexFound = true;
             }

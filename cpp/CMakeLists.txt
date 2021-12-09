@@ -7,7 +7,8 @@ project(
     HOMEPAGE_URL "https://github.com/Phytolizer/aoc-2015"
 )
 
+add_library("advent" "advent/advent.cpp" "advent/inc/advent.hpp")
+target_include_directories("advent" PUBLIC "advent/inc")
+
 add_executable("day01" "day01/main.cpp")
-set_target_properties(
-    "day01" PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-)
+target_link_libraries("day01" PRIVATE "advent")
