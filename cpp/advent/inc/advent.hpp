@@ -2,7 +2,7 @@
 
 #include <string>
 
-#define ADVENT_FOREACH_CHAR(File, CharVar) while (File >> CharVar)
+#define ADVENT_FOREACH_CHAR(File, CharVar) while ((File) >> (CharVar))
 
 namespace advent
 {
