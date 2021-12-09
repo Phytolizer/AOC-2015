@@ -5,6 +5,8 @@ int main()
 {
     char c;
     int floor = 0;
+    size_t index = 0;
+    bool indexFound = false;
     std::ifstream inf{"day01/input.txt"};
     if (!inf.is_open())
     {
@@ -19,11 +21,16 @@ int main()
             break;
         case ')':
             --floor;
+            if (!indexFound && floor < 0) {
+                std::cout << "Part 2: " << index << "\n";
+                indexFound = true;
+            }
             break;
         default:
             break;
         }
+        ++index;
     }
-    std::cout << floor << "\n";
+    std::cout << "Part 1: " << floor << "\n";
     return 0;
 }
