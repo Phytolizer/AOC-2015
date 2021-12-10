@@ -54,3 +54,7 @@ copy_puzzle_input("day01")
 add_executable("day02" "day02/main.cpp")
 target_link_libraries("day02" PRIVATE "advent")
 copy_puzzle_input("day02")
+
+add_executable("day03" "day03/main.cpp")
+target_link_libraries("day03" PRIVATE "advent")
+copy_puzzle_input("day03")
