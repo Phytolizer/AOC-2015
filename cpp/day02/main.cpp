@@ -1,3 +1,4 @@
+// ReSharper disable CppUseRangeAlgorithm
 #include <advent.hpp>
 #include <array>
 #include <ctre.hpp>
