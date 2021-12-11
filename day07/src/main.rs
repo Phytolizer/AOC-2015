@@ -1,6 +1,9 @@
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::HashMap;
+use std::fmt::Display;
+
+const DEBUG_OUTPUT: bool = false;
 
 static WIRE_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[a-z]+$").unwrap());
 
@@ -12,6 +15,12 @@ enum Op {
     Lshift,
     And,
     Or,
+}
+
+impl Display for Op {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", format!("{:?}", self).to_uppercase())
+    }
 }
 
 struct Gate {
@@ -28,10 +37,10 @@ impl Gate {
     fn new(name: String, op: Op, input_a: Option<String>, input_b: Option<String>) -> Gate {
         let description = match input_a {
             Some(ref a) => match input_b {
-                Some(ref b) => format!("{} {:?} {}", a, op, b),
+                Some(ref b) => format!("{} {} {}", a, op, b),
                 _ => a.to_string(),
             },
-            None => format!("{:?} {}", op, input_b.as_ref().unwrap()),
+            None => format!("{} {}", op, input_b.as_ref().unwrap()),
         };
         let mut g = Gate {
             name,
@@ -73,14 +82,24 @@ impl Gate {
         cache: &mut HashMap<String, i64>,
         depth: usize,
     ) -> i64 {
-        println!(
-            "{:indent$}Evaluating {} => {}",
-            "",
-            self.name,
-            self.description,
-            indent = depth * 2
-        );
+        if DEBUG_OUTPUT {
+            println!(
+                "{:indent$}Evaluating {} => {}",
+                "",
+                self.name,
+                self.description,
+                indent = depth * 2
+            );
+        }
         if cache.get(&self.name).is_some() {
+            if DEBUG_OUTPUT {
+                println!(
+                    "{:indent$}=> {} (cached)",
+                    "",
+                    cache.get(&self.name).unwrap(),
+                    indent = depth * 2
+                );
+            }
             return *cache.get(&self.name).unwrap();
         }
         match self.op {
@@ -91,6 +110,9 @@ impl Gate {
                     depth + 1,
                 );
                 cache.insert(self.name.clone(), result);
+                if DEBUG_OUTPUT {
+                    println!("{:indent$}=> {}", "", result, indent = depth * 2);
+                }
                 result
             }),
             Op::Not => {
@@ -100,6 +122,9 @@ impl Gate {
                     depth + 1,
                 );
                 cache.insert(self.name.clone(), result);
+                if DEBUG_OUTPUT {
+                    println!("{:indent$}=> {}", "", result, indent = depth * 2);
+                }
                 result
             }
             Op::Rshift => {
@@ -109,6 +134,9 @@ impl Gate {
                     depth + 1,
                 ) >> self.bits.unwrap();
                 cache.insert(self.name.clone(), result);
+                if DEBUG_OUTPUT {
+                    println!("{:indent$}=> {}", "", result, indent = depth * 2);
+                }
                 result
             }
             Op::Lshift => {
@@ -118,6 +146,9 @@ impl Gate {
                     depth + 1,
                 ) << self.bits.unwrap();
                 cache.insert(self.name.clone(), result);
+                if DEBUG_OUTPUT {
+                    println!("{:indent$}=> {}", "", result, indent = depth * 2);
+                }
                 result
             }
             Op::And => match self.value1 {
@@ -128,6 +159,9 @@ impl Gate {
                         depth + 1,
                     );
                     cache.insert(self.name.clone(), result);
+                    if DEBUG_OUTPUT {
+                        println!("{:indent$}=> {}", "", result, indent = depth * 2);
+                    }
                     result
                 }
                 None => {
@@ -141,6 +175,9 @@ impl Gate {
                         depth + 1,
                     );
                     cache.insert(self.name.clone(), result);
+                    if DEBUG_OUTPUT {
+                        println!("{:indent$}=> {}", "", result, indent = depth * 2);
+                    }
                     result
                 }
             },
@@ -152,6 +189,9 @@ impl Gate {
                         depth + 1,
                     );
                     cache.insert(self.name.clone(), result);
+                    if DEBUG_OUTPUT {
+                        println!("{:indent$}=> {}", "", result, indent = depth * 2);
+                    }
                     result
                 }
                 None => {
@@ -165,6 +205,9 @@ impl Gate {
                         depth + 1,
                     );
                     cache.insert(self.name.clone(), result);
+                    if DEBUG_OUTPUT {
+                        println!("{:indent$}=> {}", "", result, indent = depth * 2);
+                    }
                     result
                 }
             },
