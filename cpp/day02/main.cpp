@@ -15,8 +15,8 @@ int main()
         throw std::runtime_error{"Could not open input.txt!"};
     }
 
-    int result = 0;
-    int result2 = 0;
+    long result = 0;
+    long result2 = 0;
     std::string line;
     ADVENT_FOREACH_LINE(file, line)
     {
@@ -27,17 +27,17 @@ int main()
         long y = std::strtol(sy.c_str(), nullptr, 10);
         auto sz = std::string{match.get<3>().to_view()};
         long z = std::strtol(sz.c_str(), nullptr, 10);
-        std::array<int, 3> sides{
+        std::array<long, 3> sides{
             x * y,
             y * z,
             z * x,
         };
-        const int smallestSide = *std::min_element(sides.begin(), sides.end());
-        const int surfaceArea = 2 * (sides[0] + sides[1] + sides[2]) + smallestSide;
+        const long smallestSide = *std::min_element(sides.begin(), sides.end());
+        const long surfaceArea = 2 * (sides[0] + sides[1] + sides[2]) + smallestSide;
         result += surfaceArea;
 
-        std::array<int, 3> edges{x, y, z};
-        std::vector<int> ribbonLengths;
+        std::array<long, 3> edges{x, y, z};
+        std::vector<long> ribbonLengths;
         for (int i = 0; i < edges.size(); ++i)
         {
             for (int j = 0; j < edges.size(); ++j)
