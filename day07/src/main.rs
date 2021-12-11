@@ -7,6 +7,8 @@ const DEBUG_OUTPUT: bool = false;
 
 static WIRE_PATTERN: Lazy<Regex> = Lazy::new(|| Regex::new(r"^[a-z]+$").unwrap());
 
+type SignalStrength = u16;
+
 #[derive(Debug, Clone, Copy)]
 enum Op {
     Set,
@@ -29,8 +31,8 @@ struct Gate {
     input_a: Option<String>,
     input_b: Option<String>,
     description: String,
-    value1: Option<i64>,
-    bits: Option<i64>,
+    value1: Option<SignalStrength>,
+    bits: Option<SignalStrength>,
 }
 
 impl Gate {
@@ -79,9 +81,9 @@ impl Gate {
     fn eval(
         &self,
         gates: &HashMap<String, Gate>,
-        cache: &mut HashMap<String, i64>,
+        cache: &mut HashMap<String, SignalStrength>,
         depth: usize,
-    ) -> i64 {
+    ) -> SignalStrength {
         if DEBUG_OUTPUT {
             println!(
                 "{:indent$}Evaluating {} => {}",
