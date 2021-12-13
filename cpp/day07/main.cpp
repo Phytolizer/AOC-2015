@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <vector>
 
-constexpr bool DEBUG_OUTPUT = true;
+constexpr bool DEBUG_OUTPUT = false;
 
 class Gate
 {
@@ -65,7 +65,9 @@ class Gate
     }
 
   public:
-    Gate() = default;
+    Gate() : m_op{Op::SET}
+    {
+    }
 
     Gate(std::string name, Op op, std::array<std::string, 2> input)
         : m_name{std::move(name)}, m_op{op}, m_input{std::move(input)}
