@@ -28,6 +28,8 @@ enum TokenKind {
     BareQuote,
 
     #[regex(r"\\x([0-9a-fA-F][0-9a-fA-F])", get_escape_value)]
+    HexEscape(char),
+
     #[regex(r"\\\\", get_second_char)]
     #[regex(r#"\\""#, get_second_char)]
     Escape(char),
@@ -99,7 +101,7 @@ fn main() {
                         line_num
                     ),
                 },
-                TokenKind::Escape(c) => match state {
+                TokenKind::HexEscape(c) => match state {
                     ParseState::Begin => {
                         panic!("[line {}] Could not parse string: Leading escape", line_num)
                     }
@@ -112,6 +114,19 @@ fn main() {
                         line_num
                     ),
                 },
+                TokenKind::Escape(c) => match state {
+                 /*  */   ParseState::Begin => {
+                        panic!("[line {}] Could not parse string: Leading escape", line_num)
+                    }
+                    ParseState::Normal => chars.push(DecodedChar {
+                        value: c,
+                        is_hexcoded: false,
+                    }),
+                    ParseState::End => panic!(
+                        "[line {}] Could not parse string: Trailing escape",
+                        line_num
+                    ),
+                }
                 TokenKind::Error => unreachable!(),
             }
         }
@@ -126,6 +141,8 @@ fn main() {
         for DecodedChar { value, is_hexcoded } in chars {
             if value == '"' {
                 encoded_str.push_str(r#"\\\""#);
+            } else if value == '\\' {
+                encoded_str.push_str(r"\\\\");
             } else if is_hexcoded {
                 encoded_str.push_str(r"\\x");
                 encoded_str.push_str(&format!("{:02x}", value as u8));

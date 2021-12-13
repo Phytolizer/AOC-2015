@@ -264,11 +264,9 @@ fn main() {
     let input = include_str!("../input.txt");
     let mut gates = HashMap::new();
     let mut cache = HashMap::new();
-    for line in input.lines() {
-        if let Some(gate) = parse_line(line) {
-            gates.insert(gate.name.clone(), gate);
-        }
-    }
+    input.lines().filter_map(parse_line).for_each(|gate| {
+        gates.insert(gate.name.clone(), gate);
+    });
 
     let a_value = gates.get("a").unwrap().eval(&gates, &mut cache, 0);
     println!("Part 1: {}", a_value);
