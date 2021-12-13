@@ -115,7 +115,7 @@ fn main() {
                     ),
                 },
                 TokenKind::Escape(c) => match state {
-                 /*  */   ParseState::Begin => {
+                    ParseState::Begin => {
                         panic!("[line {}] Could not parse string: Leading escape", line_num)
                     }
                     ParseState::Normal => chars.push(DecodedChar {
