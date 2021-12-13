@@ -22,7 +22,7 @@ fn get_only_char(lex: &mut Lexer<TokenKind>) -> char {
     slice.chars().next().unwrap()
 }
 
-#[derive(Debug, logos::Logos)]
+#[derive(Debug, Logos)]
 enum TokenKind {
     #[token(r#"""#)]
     BareQuote,
