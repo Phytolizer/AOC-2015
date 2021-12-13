@@ -135,7 +135,7 @@ fn main() {
         }
         encoded_str.push_str(r#"\"""#);
         println!("{}", encoded_str);
-        encoded_size += encoded_str.len();
+        encoded_size += encoded_str.chars().count();
     }
 
     println!("Digital size: {}", digital_size);
