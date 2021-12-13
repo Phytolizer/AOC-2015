@@ -31,7 +31,7 @@ add_library(
     "cpp.hint"
 )
 target_include_directories("advent" PUBLIC "advent/inc")
-target_link_libraries("advent" PUBLIC "fmt::fmt" "ctre::ctre")
+target_link_libraries("advent" PUBLIC "fmt::fmt")
 
 macro(copy_puzzle_input TARGET)
     add_custom_target(
@@ -56,8 +56,10 @@ endmacro()
 
 advent("day01")
 advent("day02")
+target_link_libraries("day02" PRIVATE "ctre::ctre")
 advent("day03")
 advent("day04")
 target_link_libraries("day04" PRIVATE "crypto")
 advent("day05")
 advent("day06")
+target_link_libraries("day06" PRIVATE "ctre::ctre")
