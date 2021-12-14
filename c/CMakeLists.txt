@@ -18,25 +18,12 @@ add_library(
 )
 target_include_directories("advent" PUBLIC "advent/inc")
 
-macro(copy_puzzle_input TARGET)
-    add_custom_target(
-        "${TARGET}_input"
-        DEPENDS "${TARGET}/input.txt"
-        COMMAND "${CMAKE_COMMAND}" -E make_directory
-                "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}"
-        COMMAND
-            "${CMAKE_COMMAND}" -E copy
-            "${PROJECT_SOURCE_DIR}/${TARGET}/input.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}/input.txt"
-    )
-    add_dependencies("${TARGET}" "${TARGET}_input")
-endmacro()
-
 macro(advent TARGET)
     add_executable("${TARGET}" "${TARGET}/main.c" ${ARGN})
+    configure_file("config.h.cin" "${PROJECT_BINARY_DIR}/${TARGET}/config.h")
+    target_include_directories("${TARGET}" PRIVATE "${PROJECT_BINARY_DIR}/${TARGET}")
     target_link_libraries("${TARGET}" PRIVATE "advent")
     set_target_properties("${TARGET}" PROPERTIES OUTPUT_NAME "${TARGET}_bin")
-    copy_puzzle_input("${TARGET}")
 endmacro()
 
 advent("day01")

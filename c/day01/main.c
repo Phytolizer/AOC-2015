@@ -4,7 +4,7 @@
 
 int main(void)
 {
-    char* input = advent_readEntireFile("day01/input.txt");
+    char* input = advent_readEntireFile(ADVENT_INPUT);
     if (input == NULL)
     {
         return 1;
