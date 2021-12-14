@@ -10,6 +10,12 @@ project(
 set(CMAKE_C_STANDARD 11)
 
 include(FetchContent)
+FetchContent_Declare(
+        "pcre"
+        GIT_REPOSITORY "https://github.com/luvit/pcre2"
+        GIT_TAG "master"
+)
+FetchContent_MakeAvailable("pcre")
 
 add_library(
     "advent"
@@ -28,3 +34,5 @@ macro(advent TARGET)
 endmacro()
 
 advent("day01")
+advent("day02")
+target_link_libraries("day02" PRIVATE "pcre2-8")

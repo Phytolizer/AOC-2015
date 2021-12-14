@@ -13,7 +13,7 @@ char* NS_(readEntireFile)(const char* fileName)
     fseek(fp, 0, SEEK_END);
     long fileLen = ftell(fp);
     fseek(fp, 0, SEEK_SET);
-    char* result = malloc(fileLen);
+    char* result = malloc(fileLen + 1);
     if (!result)
     {
         fprintf(stderr, "Failed allocating memory for %s contents\n", fileName);
@@ -26,5 +26,18 @@ char* NS_(readEntireFile)(const char* fileName)
         free(result);
         return NULL;
     }
+    result[fileLen] = '\0';
     return result;
+}
+long NS_(minElement)(long* begin, long* end)
+{
+    long min = *begin;
+    for (long* p = begin; p != end; ++p)
+    {
+        if (*p < min)
+        {
+            min = *p;
+        }
+    }
+    return min;
 }

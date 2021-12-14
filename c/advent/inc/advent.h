@@ -9,3 +9,4 @@
 #define ADVENT_INPUT CMAKE_CURRENT_SOURCE_DIR "/" CMAKE_TARGET "/input.txt"
 
 char* NS_(readEntireFile)(const char* fileName);
+long NS_(minElement)(long* begin, long* end);
