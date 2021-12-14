@@ -20,7 +20,7 @@ FetchContent_MakeAvailable("pcre")
 add_library(
     "advent"
     "advent/advent.c"
-    "advent/inc/advent.h"
+    "advent/set.c"
 )
 target_include_directories("advent" PUBLIC "advent/inc")
 
@@ -36,3 +36,4 @@ endmacro()
 advent("day01")
 advent("day02")
 target_link_libraries("day02" PRIVATE "pcre2-8")
+advent("day03")
