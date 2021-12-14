@@ -18,6 +18,7 @@ struct Edge {
 #[derive(Debug)]
 struct Path {
     distance: usize,
+    #[allow(unused)]
     path: Vec<String>,
 }
 
