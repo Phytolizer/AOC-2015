@@ -20,6 +20,7 @@ target_include_directories("advent" PUBLIC "advent/inc")
 
 macro(advent TARGET)
     add_executable("${TARGET}" "${TARGET}/main.c" ${ARGN})
+    set(CMAKE_TARGET "${TARGET}")
     configure_file("config.h.cin" "${PROJECT_BINARY_DIR}/${TARGET}/config.h")
     target_include_directories("${TARGET}" PRIVATE "${PROJECT_BINARY_DIR}/${TARGET}")
     target_link_libraries("${TARGET}" PRIVATE "advent")
