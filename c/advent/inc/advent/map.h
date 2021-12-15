@@ -75,7 +75,7 @@
         if (m->buckets == NULL)                                                                                        \
         {                                                                                                              \
             m->bucketCount = 16;                                                                                       \
-            m->buckets = malloc(sizeof(MapType##Bucket) * m->bucketCount);                                             \
+            m->buckets = calloc(sizeof(MapType##Bucket), m->bucketCount);                                              \
             if (m->buckets == NULL)                                                                                    \
             {                                                                                                          \
                 return false;                                                                                          \
@@ -85,13 +85,23 @@
         {                                                                                                              \
             MapType##Bucket* oldBuckets = m->buckets;                                                                  \
             m->bucketCount *= 2;                                                                                       \
-            m->buckets = malloc(sizeof(MapType##Bucket) * m->bucketCount);                                             \
+            m->buckets = calloc(sizeof(MapType##Bucket), m->bucketCount);                                              \
             if (m->buckets == NULL)                                                                                    \
             {                                                                                                          \
                 m->buckets = oldBuckets;                                                                               \
                 return false;                                                                                          \
             }                                                                                                          \
-            memcpy(m->buckets, oldBuckets, sizeof(MapType##Bucket) * m->bucketCount / 2);                              \
+            for (size_t i = 0; i < m->bucketCount / 2; i++)                                                            \
+            {                                                                                                          \
+                if (oldBuckets[i].key != NULL)                                                                         \
+                {                                                                                                      \
+                    MapType##Bucket* b =                                                                               \
+                        MapType##_findBucket_(m->buckets, m->bucketCount, oldBuckets[i].key, oldBuckets[i].keyLen);    \
+                    b->key = oldBuckets[i].key;                                                                        \
+                    b->keyLen = oldBuckets[i].keyLen;                                                                  \
+                    b->value = oldBuckets[i].value;                                                                    \
+                }                                                                                                      \
+            }                                                                                                          \
             free(oldBuckets);                                                                                          \
         }                                                                                                              \
         MapType##Bucket* bucket = m->buckets + m->entryCount;                                                          \
