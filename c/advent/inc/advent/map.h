@@ -105,6 +105,10 @@
             free(oldBuckets);                                                                                          \
         }                                                                                                              \
         MapType##Bucket* bucket = MapType##_findBucket_(m->buckets, m->bucketCount, key, keyLength);                   \
+        if (bucket->key != NULL)                                                                                       \
+        {                                                                                                              \
+            free(bucket->key);                                                                                         \
+        }                                                                                                              \
         bucket->key = malloc(keyLength);                                                                               \
         if (bucket->key == NULL)                                                                                       \
         {                                                                                                              \

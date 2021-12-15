@@ -396,11 +396,20 @@ int main(void)
     Gate_deinit(&b);
     char* aStrengthStr = advent_itoa(aStrength);
     Gate_init(&b, "b", OP_SET, aStrengthStr, NULL, wirePattern);
+    free(aStrengthStr);
     assert(GateMap_insert(&gates, "b", 1, b));
     SignalStrengthMap_clear(&cache);
     aStrength = Gate_eval(&a, &gates, &cache, 0);
     printf("a: %d\n", aStrength);
 
+    for (size_t i = 0; i < cache.bucketCount; ++i)
+    {
+        if (cache.buckets[i].key != NULL)
+        {
+            free(cache.buckets[i].key);
+        }
+    }
+    SignalStrengthMap_deinit(&cache);
     for (size_t i = 0; i < gates.bucketCount; ++i)
     {
         if (gates.buckets[i].key != NULL)
@@ -409,7 +418,6 @@ int main(void)
             Gate_deinit(&gates.buckets[i].value);
         }
     }
-    SignalStrengthMap_deinit(&cache);
     GateMap_deinit(&gates);
     pcre2_match_data_free(lineMatchData);
     pcre2_code_free(linePattern);
