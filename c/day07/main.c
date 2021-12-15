@@ -127,7 +127,7 @@ void Gate_deinit(Gate* g)
     free(g->bits);
 }
 
-SignalStrength Gate_eval(Gate* g, GateMap* gates, SignalStrengthMap* cache, size_t depth)
+SignalStrength Gate_eval(Gate* g, GateMap* gates, SignalStrengthMap* cache, int depth)
 {
 #if DEBUG_OUTPUT
     printf("%*s%s => %s\n", depth * 2, "", g->name, g->description);
@@ -400,6 +400,7 @@ int main(void)
             Gate_deinit(&gates.buckets[i].value);
         }
     }
+    SignalStrengthMap_deinit(&cache);
     GateMap_deinit(&gates);
     pcre2_match_data_free(lineMatchData);
     pcre2_code_free(linePattern);
