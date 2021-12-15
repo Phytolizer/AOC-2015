@@ -11,7 +11,7 @@
 DECLARE_VECTOR(StringVector, char*);
 DEFINE_VECTOR(StringVector, char*);
 
-#define DEBUG_OUTPUT false
+#define DEBUG_OUTPUT true
 
 typedef uint16_t SignalStrength;
 
@@ -67,18 +67,17 @@ void Gate_init(Gate* g, const char* name, Op op, const char* inputA, const char*
     g->name = advent_strdup(name);
     g->inputA = advent_strdup(inputA);
     g->inputB = advent_strdup(inputB);
-    char* description;
     if (inputA == NULL)
     {
-        description = advent_allocatedSPrintf("%s %s", opStr(op), inputB);
+        g->description = advent_allocatedSPrintf("%s %s", opStr(op), inputB);
     }
     else if (inputB == NULL)
     {
-        description = advent_allocatedSPrintf("%s", inputA);
+        g->description = advent_allocatedSPrintf("%s", inputA);
     }
     else
     {
-        description = advent_allocatedSPrintf("%s %s %s", inputA, opStr(op), inputB);
+        g->description = advent_allocatedSPrintf("%s %s %s", inputA, opStr(op), inputB);
     }
 
     switch (op)
@@ -380,7 +379,7 @@ int main(void)
     SignalStrengthMap cache;
     SignalStrengthMap_init(&cache);
     Gate a;
-    GateMap_get(&gates, "a", 1, &a);
+    assert(GateMap_get(&gates, "a", 1, &a));
     SignalStrength aStrength = Gate_eval(&a, &gates, &cache, 0);
     printf("a: %d\n", aStrength);
     Gate b;
