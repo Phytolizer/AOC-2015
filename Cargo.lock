@@ -149,6 +149,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "day12"
+version = "0.1.0"
+dependencies = [
+ "json",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -198,6 +205,12 @@ checksum = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
 dependencies = [
  "either",
 ]
+
+[[package]]
+name = "json"
+version = "0.12.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "078e285eafdfb6c4b434e0d31e8cfcb5115b651496faca5749b88fafd4f23bfd"
 
 [[package]]
 name = "libc"
