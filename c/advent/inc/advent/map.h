@@ -62,7 +62,7 @@
         {                                                                                                              \
             return NULL;                                                                                               \
         }                                                                                                              \
-        uint64_t h = MapType##_hash_(key, keyLength);                                                                  \
+        uint64_t h = MapType##_hash_(key, keyLength) % bucketCount;                                                    \
         while (buckets[h].key != NULL &&                                                                               \
                !(buckets[h].keyLen == keyLength && memcmp(buckets[h].key, key, keyLength) == 0))                       \
         {                                                                                                              \
