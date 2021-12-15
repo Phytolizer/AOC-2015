@@ -102,7 +102,7 @@ void Gate_init(Gate* g, const char* name, Op op, const char* inputA, const char*
         break;
     case OP_NOT:
         assert(inputA == NULL &&
-               pcre2_match(wirePattern, (PCRE2_SPTR)inputA, PCRE2_ZERO_TERMINATED, 0, 0, wireMatchData, 0) !=
+               pcre2_match(wirePattern, (PCRE2_SPTR)inputB, PCRE2_ZERO_TERMINATED, 0, 0, wireMatchData, 0) !=
                    PCRE2_ERROR_NOMATCH &&
                "Invalid NOT gate");
         break;
@@ -351,7 +351,7 @@ int main(void)
         return 1;
     }
     pcre2_code* linePattern =
-        pcre2_compile((PCRE2_SPTR) "(\\S+) -> (\\S+)", PCRE2_ZERO_TERMINATED, 0, &errCode, &errOfs, NULL);
+        pcre2_compile((PCRE2_SPTR) "(.+) -> (\\S+)", PCRE2_ZERO_TERMINATED, 0, &errCode, &errOfs, NULL);
     if (errCode < 0)
     {
         char message[120];
