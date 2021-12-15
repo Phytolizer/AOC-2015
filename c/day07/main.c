@@ -79,19 +79,22 @@ void Gate_init(Gate* g, const char* name, Op op, const char* inputA, const char*
     {
         g->description = advent_allocatedSPrintf("%s %s %s", inputA, opStr(op), inputB);
     }
+    pcre2_match_data* wireMatchData = pcre2_match_data_create_from_pattern(wirePattern, NULL);
 
     switch (op)
     {
-    case OP_SET:
-        if (pcre2_match(wirePattern, (PCRE2_SPTR)inputA, PCRE2_ZERO_TERMINATED, 0, 0, NULL, 0) == PCRE2_ERROR_NOMATCH)
+    case OP_SET: {
+        int rc = pcre2_match(wirePattern, (PCRE2_SPTR)inputA, PCRE2_ZERO_TERMINATED, 0, 0, wireMatchData, 0);
+        if (rc == PCRE2_ERROR_NOMATCH)
         {
             g->value1 = malloc(sizeof(SignalStrength));
             *g->value1 = strtol(inputA, NULL, 10);
         }
-        break;
+    }
+    break;
     case OP_LSHIFT:
     case OP_RSHIFT:
-        assert(pcre2_match(wirePattern, (PCRE2_SPTR)inputA, PCRE2_ZERO_TERMINATED, 0, 0, NULL, 0) !=
+        assert(pcre2_match(wirePattern, (PCRE2_SPTR)inputA, PCRE2_ZERO_TERMINATED, 0, 0, wireMatchData, 0) !=
                    PCRE2_ERROR_NOMATCH &&
                "Invalid SHIFT gate");
         g->bits = malloc(sizeof(SignalStrength));
@@ -99,22 +102,24 @@ void Gate_init(Gate* g, const char* name, Op op, const char* inputA, const char*
         break;
     case OP_NOT:
         assert(inputA == NULL &&
-               pcre2_match(wirePattern, (PCRE2_SPTR)inputA, PCRE2_ZERO_TERMINATED, 0, 0, NULL, 0) !=
+               pcre2_match(wirePattern, (PCRE2_SPTR)inputA, PCRE2_ZERO_TERMINATED, 0, 0, wireMatchData, 0) !=
                    PCRE2_ERROR_NOMATCH &&
                "Invalid NOT gate");
         break;
     case OP_AND:
     case OP_OR:
-        assert(pcre2_match(wirePattern, (PCRE2_SPTR)inputB, PCRE2_ZERO_TERMINATED, 0, 0, NULL, 0) !=
+        assert(pcre2_match(wirePattern, (PCRE2_SPTR)inputB, PCRE2_ZERO_TERMINATED, 0, 0, wireMatchData, 0) !=
                    PCRE2_ERROR_NOMATCH &&
                "Invalid AND/OR gate");
-        if (pcre2_match(wirePattern, (PCRE2_SPTR)inputA, PCRE2_ZERO_TERMINATED, 0, 0, NULL, 0) == PCRE2_ERROR_NOMATCH)
+        if (pcre2_match(wirePattern, (PCRE2_SPTR)inputA, PCRE2_ZERO_TERMINATED, 0, 0, wireMatchData, 0) ==
+            PCRE2_ERROR_NOMATCH)
         {
             g->value1 = malloc(sizeof(SignalStrength));
             *g->value1 = strtol(inputA, NULL, 10);
         }
         break;
     }
+    pcre2_match_data_free(wireMatchData);
 }
 
 void Gate_deinit(Gate* g)
@@ -327,6 +332,7 @@ bool parseLine(const char* line, pcre2_code* linePattern, pcre2_match_data* line
             return false;
         }
         StringVector_deinit(&words);
+        free(name);
         free(inputs);
         return true;
     }
@@ -372,9 +378,12 @@ int main(void)
         Gate g;
         if (parseLine(line, linePattern, lineMatchData, wirePattern, &g))
         {
-            GateMap_insert(&gates, g.name, strlen(g.name), g);
+            assert(GateMap_insert(&gates, g.name, strlen(g.name), g));
         }
+        free(line);
+        line = NULL;
     }
+    free(line);
 
     SignalStrengthMap cache;
     SignalStrengthMap_init(&cache);
@@ -387,7 +396,7 @@ int main(void)
     Gate_deinit(&b);
     char* aStrengthStr = advent_itoa(aStrength);
     Gate_init(&b, "b", OP_SET, aStrengthStr, NULL, wirePattern);
-    GateMap_insert(&gates, "b", 1, b);
+    assert(GateMap_insert(&gates, "b", 1, b));
     SignalStrengthMap_clear(&cache);
     aStrength = Gate_eval(&a, &gates, &cache, 0);
     printf("a: %d\n", aStrength);
