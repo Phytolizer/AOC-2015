@@ -10,3 +10,6 @@
 
 char* NS_(readEntireFile)(const char* fileName);
 long NS_(minElement)(long* begin, long* end);
+char* NS_(allocatedSPrintf)(const char* format, ...);
+char* NS_(strdup)(const char* str);
+char* NS_(itoa)(int value);
