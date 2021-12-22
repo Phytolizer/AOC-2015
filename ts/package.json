@@ -5,7 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "build": "tsc",
-    "day01": "node build/day01"
+    "day01": "node build/day01",
+    "day02": "node build/day02"
   },
   "keywords": [],
   "author": "",

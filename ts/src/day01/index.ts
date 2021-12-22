@@ -1,4 +1,3 @@
-import assert from "assert";
 import { readFileSync } from "fs";
 import { join } from "path";
 
