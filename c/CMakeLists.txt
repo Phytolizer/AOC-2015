@@ -17,7 +17,10 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable("pcre")
 
-add_library("advent" "advent/advent.c" "advent/set.c" "advent/permute.c")
+add_library(
+  "advent" "advent/advent.c" "advent/set.c" "advent/permute.c"
+           "advent/string.c"
+)
 target_include_directories("advent" PUBLIC "advent/inc")
 
 macro(advent TARGET)
@@ -52,3 +55,5 @@ advent("day12")
 target_link_libraries("day12" PRIVATE "json-c")
 advent("day13")
 target_link_libraries("day13" PRIVATE "pcre2-8")
+advent("day14")
+target_link_libraries("day14" PRIVATE "pcre2-8")
