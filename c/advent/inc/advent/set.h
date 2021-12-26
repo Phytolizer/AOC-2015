@@ -3,17 +3,15 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-typedef struct
-{
-    void* value;
-    size_t valueLength;
+typedef struct {
+  void* value;
+  size_t valueLength;
 } SetBucket;
 
-typedef struct
-{
-    SetBucket* data;
-    size_t count;
-    size_t capacity;
+typedef struct {
+  SetBucket* data;
+  size_t count;
+  size_t capacity;
 } Set;
 
 void Set_init(Set* s);
