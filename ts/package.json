@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "day01": "node build/day01",
-    "day02": "node build/day02"
+    "day02": "node build/day02",
+    "day03": "node build/day03"
   },
   "keywords": [],
   "author": "",
