@@ -9,7 +9,7 @@
                         const ValueType value);                           \
   bool MapType##_contains(MapType* m, const void* key, size_t keyLength); \
   bool MapType##_get(MapType* m, const void* key, size_t keyLength,       \
-                     ValueType* value);                                   \
+                     ValueType** value);                                  \
   void MapType##_clear(MapType* m)
 
 #define DECLARE_MAP(MapType, ValueType) \
@@ -116,13 +116,13 @@
            memcmp(bucket->key, key, keyLength) == 0;                          \
   }                                                                           \
   bool MapType##_get(MapType* m, const void* key, size_t keyLength,           \
-                     ValueType* value) {                                      \
+                     ValueType** value) {                                     \
     MapType##Bucket* bucket =                                                 \
         MapType##_findBucket_(m->buckets, m->bucketCount, key, keyLength);    \
     if (bucket != NULL && bucket->key != NULL &&                              \
         bucket->keyLen == keyLength &&                                        \
         memcmp(bucket->key, key, keyLength) == 0) {                           \
-      *value = bucket->value;                                                 \
+      *value = &bucket->value;                                                \
       return true;                                                            \
     }                                                                         \
     return false;                                                             \

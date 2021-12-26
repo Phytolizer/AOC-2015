@@ -64,6 +64,20 @@ char* NS_(strdup)(const char* str) {
   strcpy(result, str);
   return result;
 }
+char* NS_(strndup)(const char* str, size_t n) {
+  if (str == NULL) {
+    return NULL;
+  }
+  char* result = malloc(n + 1);
+  memcpy(result, str, n);
+  result[n] = '\0';
+  return result;
+}
+void* NS_(memdup)(const void* ptr, size_t size) {
+  void* result = malloc(size);
+  memcpy(result, ptr, size);
+  return result;
+}
 char* NS_(itoa)(int value) {
   char* result = malloc(32);
   if (!result) {

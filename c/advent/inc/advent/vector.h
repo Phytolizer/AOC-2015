@@ -2,10 +2,11 @@
 
 #include <stddef.h>
 
-#define VECTOR_PROTO_(VectorType, ValueType) \
-  void VectorType##_init(VectorType* v);     \
-  void VectorType##_deinit(VectorType* v);   \
-  void VectorType##_push(VectorType* v, ValueType value);
+#define VECTOR_PROTO_(VectorType, ValueType)              \
+  void VectorType##_init(VectorType* v);                  \
+  void VectorType##_deinit(VectorType* v);                \
+  void VectorType##_push(VectorType* v, ValueType value); \
+  VectorType VectorType##_dup(VectorType* v)
 
 #define DECLARE_VECTOR(VectorType, ValueType) \
   typedef struct {                            \
@@ -33,4 +34,12 @@
       v->data = realloc(v->data, v->capacity * sizeof(ValueType)); \
     }                                                              \
     v->data[v->length++] = value;                                  \
+  }                                                                \
+  VectorType VectorType##_dup(VectorType* v) {                     \
+    VectorType result;                                             \
+    result.data = malloc(v->length * sizeof(ValueType));           \
+    result.length = v->length;                                     \
+    result.capacity = v->capacity;                                 \
+    memcpy(result.data, v->data, v->length * sizeof(ValueType));   \
+    return result;                                                 \
   }

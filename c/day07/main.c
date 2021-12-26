@@ -126,21 +126,22 @@ SignalStrength Gate_eval(Gate* g, GateMap* gates, SignalStrengthMap* cache,
 #if DEBUG_OUTPUT
   printf("%*s%s => %s\n", depth * 2, "", g->name, g->description);
 #endif
-  SignalStrength result;
-  if (SignalStrengthMap_get(cache, g->name, strlen(g->name), &result)) {
+  SignalStrength* cached_result;
+  if (SignalStrengthMap_get(cache, g->name, strlen(g->name), &cached_result)) {
 #if DEBUG_OUTPUT
-    printf("%*s=> %d (cache hit)\n", depth * 2, "", result);
+    printf("%*s=> %d (cache hit)\n", depth * 2, "", *cached_result);
 #endif
-    return result;
+    return *cached_result;
   }
+  SignalStrength result;
   switch (g->op) {
     case OP_SET:
       if (g->value1 != NULL) {
         return *g->value1;
       } else {
-        Gate a;
+        Gate* a;
         GateMap_get(gates, g->inputA, strlen(g->inputA), &a);
-        result = Gate_eval(&a, gates, cache, depth + 1);
+        result = Gate_eval(a, gates, cache, depth + 1);
         SignalStrengthMap_insert(cache, g->name, strlen(g->name), result);
 #if DEBUG_OUTPUT
         printf("%*s=> %d (set)\n", depth * 2, "", result);
@@ -148,9 +149,9 @@ SignalStrength Gate_eval(Gate* g, GateMap* gates, SignalStrengthMap* cache,
         return result;
       }
     case OP_NOT: {
-      Gate a;
+      Gate* a;
       GateMap_get(gates, g->inputA, strlen(g->inputA), &a);
-      result = ~Gate_eval(&a, gates, cache, depth + 1);
+      result = ~Gate_eval(a, gates, cache, depth + 1);
       SignalStrengthMap_insert(cache, g->name, strlen(g->name), result);
 #if DEBUG_OUTPUT
       printf("%*s=> %d (NOT)\n", depth * 2, "", result);
@@ -158,9 +159,9 @@ SignalStrength Gate_eval(Gate* g, GateMap* gates, SignalStrengthMap* cache,
       return result;
     }
     case OP_RSHIFT: {
-      Gate a;
+      Gate* a;
       GateMap_get(gates, g->inputA, strlen(g->inputA), &a);
-      result = Gate_eval(&a, gates, cache, depth + 1) >> *g->bits;
+      result = Gate_eval(a, gates, cache, depth + 1) >> *g->bits;
       SignalStrengthMap_insert(cache, g->name, strlen(g->name), result);
 #if DEBUG_OUTPUT
       printf("%*s=> %d (RSHIFT)\n", depth * 2, "", result);
@@ -168,9 +169,9 @@ SignalStrength Gate_eval(Gate* g, GateMap* gates, SignalStrengthMap* cache,
       return result;
     }
     case OP_LSHIFT: {
-      Gate a;
+      Gate* a;
       GateMap_get(gates, g->inputA, strlen(g->inputA), &a);
-      result = Gate_eval(&a, gates, cache, depth + 1) << *g->bits;
+      result = Gate_eval(a, gates, cache, depth + 1) << *g->bits;
       SignalStrengthMap_insert(cache, g->name, strlen(g->name), result);
 #if DEBUG_OUTPUT
       printf("%*s=> %d (LSHIFT)\n", depth * 2, "", result);
@@ -179,20 +180,20 @@ SignalStrength Gate_eval(Gate* g, GateMap* gates, SignalStrengthMap* cache,
     }
     case OP_AND:
       if (g->value1 != NULL) {
-        Gate b;
+        Gate* b;
         GateMap_get(gates, g->inputB, strlen(g->inputB), &b);
-        result = Gate_eval(&b, gates, cache, depth + 1) & *g->value1;
+        result = Gate_eval(b, gates, cache, depth + 1) & *g->value1;
 #if DEBUG_OUTPUT
         printf("%*s=> %d (AND)\n", depth * 2, "", result);
 #endif
         return result;
       } else {
-        Gate a;
+        Gate* a;
         GateMap_get(gates, g->inputA, strlen(g->inputA), &a);
-        Gate b;
+        Gate* b;
         GateMap_get(gates, g->inputB, strlen(g->inputB), &b);
-        result = Gate_eval(&a, gates, cache, depth + 1) &
-                 Gate_eval(&b, gates, cache, depth + 1);
+        result = Gate_eval(a, gates, cache, depth + 1) &
+                 Gate_eval(b, gates, cache, depth + 1);
         SignalStrengthMap_insert(cache, g->name, strlen(g->name), result);
 #if DEBUG_OUTPUT
         printf("%*s=> %d (AND)\n", depth * 2, "", result);
@@ -201,20 +202,20 @@ SignalStrength Gate_eval(Gate* g, GateMap* gates, SignalStrengthMap* cache,
       }
     case OP_OR:
       if (g->value1 != NULL) {
-        Gate b;
+        Gate* b;
         GateMap_get(gates, g->inputB, strlen(g->inputB), &b);
-        result = Gate_eval(&b, gates, cache, depth + 1) | *g->value1;
+        result = Gate_eval(b, gates, cache, depth + 1) | *g->value1;
 #if DEBUG_OUTPUT
         printf("%*s=> %d (OR)\n", depth * 2, "", result);
 #endif
         return result;
       } else {
-        Gate a;
+        Gate* a;
         GateMap_get(gates, g->inputA, strlen(g->inputA), &a);
-        Gate b;
+        Gate* b;
         GateMap_get(gates, g->inputB, strlen(g->inputB), &b);
-        result = Gate_eval(&a, gates, cache, depth + 1) |
-                 Gate_eval(&b, gates, cache, depth + 1);
+        result = Gate_eval(a, gates, cache, depth + 1) |
+                 Gate_eval(b, gates, cache, depth + 1);
         SignalStrengthMap_insert(cache, g->name, strlen(g->name), result);
 #if DEBUG_OUTPUT
         printf("%*s=> %d (OR)\n", depth * 2, "", result);
@@ -343,19 +344,19 @@ int main(void) {
 
   SignalStrengthMap cache;
   SignalStrengthMap_init(&cache);
-  Gate a;
+  Gate* a;
   assert(GateMap_get(&gates, "a", 1, &a));
-  SignalStrength aStrength = Gate_eval(&a, &gates, &cache, 0);
+  SignalStrength aStrength = Gate_eval(a, &gates, &cache, 0);
   printf("a: %d\n", aStrength);
-  Gate b;
+  Gate* b;
   GateMap_get(&gates, "b", 1, &b);
-  Gate_deinit(&b);
+  Gate_deinit(b);
   char* aStrengthStr = advent_itoa(aStrength);
-  Gate_init(&b, "b", OP_SET, aStrengthStr, NULL, wirePattern);
+  Gate_init(b, "b", OP_SET, aStrengthStr, NULL, wirePattern);
   free(aStrengthStr);
-  assert(GateMap_insert(&gates, "b", 1, b));
+  assert(GateMap_insert(&gates, "b", 1, *b));
   SignalStrengthMap_clear(&cache);
-  aStrength = Gate_eval(&a, &gates, &cache, 0);
+  aStrength = Gate_eval(a, &gates, &cache, 0);
   printf("a: %d\n", aStrength);
 
   for (size_t i = 0; i < cache.bucketCount; ++i) {
