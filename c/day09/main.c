@@ -1,6 +1,7 @@
 #include <advent.h>
 #include <advent/map.h>
 #include <advent/pcre.h>
+#include <advent/permute.h>
 #include <advent/set.h>
 #include <advent/vector.h>
 #include <assert.h>
@@ -29,19 +30,10 @@ typedef struct {
   vec_str_t path;
 } path_t;
 
-typedef struct {
-  size_t index;
-  int direction;
-} permutation_element_t;
-
 DECLARE_VECTOR(edge_vec_t, edge_t);
 DEFINE_VECTOR(edge_vec_t, edge_t);
 DECLARE_VECTOR(path_vec_t, path_t);
 DEFINE_VECTOR(path_vec_t, path_t);
-DECLARE_VECTOR(permutation_t, permutation_element_t);
-DEFINE_VECTOR(permutation_t, permutation_element_t);
-DECLARE_VECTOR(permutation_vec_t, permutation_t);
-DEFINE_VECTOR(permutation_vec_t, permutation_t);
 DECLARE_VECTOR(str_vec_t, char*);
 DEFINE_VECTOR(str_vec_t, char*);
 
@@ -49,12 +41,6 @@ DECLARE_MAP(size_map_t, size_t);
 DEFINE_MAP(size_map_t, size_t);
 DECLARE_MAP(graph_t, size_map_t);
 DEFINE_MAP(graph_t, size_map_t);
-
-static permutation_t first_permutation(size_t n);
-static permutation_vec_t all_permutations(size_t n);
-static bool next_permutation(permutation_t* p);
-static permutation_element_t* permutation_swap(permutation_t* permutation,
-                                               size_t i);
 
 int main(void) {
   int error;
@@ -192,96 +178,4 @@ int main(void) {
   free(line);
   pcre2_code_free(code);
   return 0;
-}
-
-static permutation_t first_permutation(size_t n) {
-  permutation_t p;
-  permutation_t_init(&p);
-  permutation_element_t first = {0};
-  permutation_t_push(&p, first);
-  for (size_t i = 1; i < n; ++i) {
-    permutation_element_t e = {
-        .index = i,
-        .direction = -1,
-    };
-    permutation_t_push(&p, e);
-  }
-  return p;
-}
-
-static permutation_vec_t all_permutations(size_t n) {
-  /// Even's speedup to the Steinhaus-Johnson-Trotter algorithm
-  permutation_vec_t pv;
-  permutation_vec_t_init(&pv);
-  permutation_t p = first_permutation(n);
-  permutation_vec_t_push(&pv, p);
-  size_t chosen = 0;
-  while (true) {
-    bool found = false;
-    size_t max_index = 0;
-    for (size_t i = 0; i < p.length; ++i) {
-      if (p.data[i].direction != 0) {
-        found = true;
-        if (p.data[i].index > max_index) {
-          max_index = p.data[i].index;
-          chosen = i;
-        }
-      }
-    }
-    if (!found) {
-      break;
-    }
-    permutation_t next = permutation_t_dup(&p);
-    permutation_element_t* swapped = permutation_swap(&next, chosen);
-    for (size_t i = 0; i < next.length; ++i) {
-      if (next.data[i].index > swapped->index) {
-        next.data[i].direction = i < chosen ? 1 : -1;
-      }
-    }
-    permutation_vec_t_push(&pv, next);
-    p = next;
-  }
-  return pv;
-}
-
-static bool next_permutation(permutation_t* p) {
-  bool found = false;
-  size_t max_index = 0;
-  size_t chosen = 0;
-  for (size_t i = 0; i < p->length; ++i) {
-    if (p->data[i].direction != 0) {
-      found = true;
-      if (p->data[i].index > max_index) {
-        max_index = p->data[i].index;
-        chosen = i;
-      }
-    }
-  }
-  if (!found) {
-    return false;
-  }
-  permutation_element_t* swapped = permutation_swap(p, chosen);
-  for (size_t i = 0; i < p->length; ++i) {
-    if (p->data[i].index > swapped->index) {
-      p->data[i].direction = i < chosen ? 1 : -1;
-    }
-  }
-  return true;
-}
-
-static permutation_element_t* permutation_swap(permutation_t* permutation,
-                                               size_t i) {
-  /// Swap the ith element with the element in its indicated direction
-  permutation_element_t* e = &permutation->data[i];
-  size_t next_index = i + e->direction;
-  permutation_element_t* e2 = &permutation->data[next_index];
-  permutation_element_t tmp = *e;
-  *e = *e2;
-  *e2 = tmp;
-  size_t next_next_index = next_index + e2->direction;
-  if (next_index == 0 || next_index == permutation->length - 1 ||
-      permutation->data[next_next_index].index > e2->index) {
-    e2->direction = 0;
-  }
-  return e2;
 }
