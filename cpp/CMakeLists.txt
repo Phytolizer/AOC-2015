@@ -33,37 +33,51 @@ add_library(
 target_include_directories("advent" PUBLIC "advent/inc")
 target_link_libraries("advent" PUBLIC "fmt::fmt")
 
-macro(copy_puzzle_input TARGET)
-    add_custom_target(
-        "${TARGET}_input"
-        DEPENDS "${TARGET}/input.txt"
-        COMMAND "${CMAKE_COMMAND}" -E make_directory
-                "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}"
-        COMMAND
-            "${CMAKE_COMMAND}" -E copy
-            "${PROJECT_SOURCE_DIR}/${TARGET}/input.txt"
-            "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}/input.txt"
+function(advent TARGET)
+    cmake_parse_arguments(
+        PARSE_ARGV
+        0
+        "ADVENT"
+        ""
+        ""
+        "LIBS"
     )
-    add_dependencies("${TARGET}" "${TARGET}_input")
-endmacro()
-
-macro(advent TARGET)
-    add_executable("${TARGET}" "${TARGET}/main.cpp" ${ARGN})
-    target_link_libraries("${TARGET}" PRIVATE "advent")
+    add_executable("${TARGET}" "${TARGET}/main.cpp")
+    target_link_libraries("${TARGET}" PRIVATE "advent" ${ADVENT_LIBS})
     set_target_properties("${TARGET}" PROPERTIES OUTPUT_NAME "${TARGET}_bin")
-    copy_puzzle_input("${TARGET}")
-endmacro()
+    configure_file(
+        "config.hpp.cin" "${PROJECT_BINARY_DIR}/${TARGET}/config.hpp"
+    )
+    target_include_directories(
+        "${TARGET}" PUBLIC "${PROJECT_BINARY_DIR}/${TARGET}"
+    )
+endfunction()
 
 advent("day01")
-advent("day02")
-target_link_libraries("day02" PRIVATE "ctre::ctre")
+advent(
+    "day02"
+    LIBS
+    "ctre::ctre"
+)
 advent("day03")
-advent("day04")
-target_link_libraries("day04" PRIVATE "crypto")
+advent(
+    "day04"
+    LIBS
+    "crypto"
+)
 advent("day05")
-advent("day06")
-target_link_libraries("day06" PRIVATE "ctre::ctre")
-advent("day07")
-target_link_libraries("day07" PRIVATE "ctre::ctre")
-advent("day08")
-target_link_libraries("day08" PRIVATE "ctre::ctre")
+advent(
+    "day06"
+    LIBS
+    "ctre::ctre"
+)
+advent(
+    "day07"
+    LIBS
+    "ctre::ctre"
+)
+advent(
+    "day08"
+    LIBS
+    "ctre::ctre"
+)
