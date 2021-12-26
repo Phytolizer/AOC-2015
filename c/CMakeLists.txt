@@ -18,42 +18,42 @@ FetchContent_Declare(
 FetchContent_MakeAvailable("pcre")
 
 add_library(
-  "advent" "advent/advent.c" "advent/set.c" "advent/permute.c"
+  "advent-c" "advent/advent.c" "advent/set.c" "advent/permute.c"
            "advent/string.c"
 )
-target_include_directories("advent" PUBLIC "advent/inc")
+target_include_directories("advent-c" PUBLIC "advent/inc")
 
 macro(advent TARGET)
-  add_executable("${TARGET}" "${TARGET}/main.c" ${ARGN})
+  add_executable("${TARGET}-c" "${TARGET}/main.c" ${ARGN})
   set(CMAKE_TARGET "${TARGET}")
   configure_file("config.h.cin" "${PROJECT_BINARY_DIR}/${TARGET}/config.h")
   target_include_directories(
-    "${TARGET}" PRIVATE "${PROJECT_BINARY_DIR}/${TARGET}"
+    "${TARGET}-c" PRIVATE "${PROJECT_BINARY_DIR}/${TARGET}"
   )
-  target_link_libraries("${TARGET}" PRIVATE "advent")
-  set_target_properties("${TARGET}" PROPERTIES OUTPUT_NAME "${TARGET}_bin")
+  target_link_libraries("${TARGET}-c" PRIVATE "advent-c")
+  set_target_properties("${TARGET}-c" PROPERTIES OUTPUT_NAME "${TARGET}_bin")
 endmacro()
 
 advent("day01")
 advent("day02")
-target_link_libraries("day02" PRIVATE "pcre2-8")
+target_link_libraries("day02-c" PRIVATE "pcre2-8")
 advent("day03")
 advent("day04")
-target_link_libraries("day04" PRIVATE "crypto" "m")
+target_link_libraries("day04-c" PRIVATE "crypto" "m")
 advent("day05")
 advent("day06")
-target_link_libraries("day06" PRIVATE "pcre2-8")
+target_link_libraries("day06-c" PRIVATE "pcre2-8")
 advent("day07")
-target_link_libraries("day07" PRIVATE "pcre2-8" "asan")
+target_link_libraries("day07-c" PRIVATE "pcre2-8" "asan")
 advent("day08")
-target_link_libraries("day08" PRIVATE "pcre2-8")
+target_link_libraries("day08-c" PRIVATE "pcre2-8")
 advent("day09")
-target_link_libraries("day09" PRIVATE "pcre2-8")
+target_link_libraries("day09-c" PRIVATE "pcre2-8")
 advent("day10")
 advent("day11")
 advent("day12")
-target_link_libraries("day12" PRIVATE "json-c")
+target_link_libraries("day12-c" PRIVATE "json-c")
 advent("day13")
-target_link_libraries("day13" PRIVATE "pcre2-8")
+target_link_libraries("day13-c" PRIVATE "pcre2-8")
 advent("day14")
-target_link_libraries("day14" PRIVATE "pcre2-8")
+target_link_libraries("day14-c" PRIVATE "pcre2-8")
