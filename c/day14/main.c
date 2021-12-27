@@ -29,8 +29,8 @@ typedef struct {
 DECLARE_VECTOR(reindeer_vec_t, reindeer_t);
 DEFINE_VECTOR(reindeer_vec_t, reindeer_t);
 
-int reindeer_position_cmp(const void* a, const void* b);
-int reindeer_score_cmp(const void* a, const void* b);
+int reindeer_position_cmp(const void* a, const void* b, void* unused);
+int reindeer_score_cmp(const void* a, const void* b, void* unused);
 
 int main(void) {
   FILE* fp = fopen(ADVENT_INPUT, "r");
@@ -102,14 +102,13 @@ int main(void) {
         max_distance = MAX(max_distance, r->position);
       }
     }
-    qsort(reindeer.data, reindeer.length, sizeof(reindeer_t),
-          reindeer_position_cmp);
+    advent_qsort_r(reindeer.data, reindeer.length, sizeof(reindeer_t),
+                   reindeer_position_cmp, NULL);
     reindeer.data[0].score++;
   }
 
-  qsort(reindeer.data, reindeer.length, sizeof(reindeer_t), reindeer_score_cmp);
-  reindeer_t* winner = &reindeer.data[0];
-  printf("%zu\n", winner->score);
+  advent_qsort_r(reindeer.data, reindeer.length, sizeof(reindeer_t),
+                 reindeer_score_cmp, NULL);
   printf("== LEADERBOARD ==\n");
   for (size_t i = 0; i < reindeer.length; ++i) {
     printf("%s: %zu\n", reindeer.data[i].name.s, reindeer.data[i].score);
@@ -125,13 +124,15 @@ int main(void) {
   return 0;
 }
 
-int reindeer_position_cmp(const void* a, const void* b) {
+int reindeer_position_cmp(const void* a, const void* b, void* unused) {
+  (void)unused;
   const reindeer_t* ra = a;
   const reindeer_t* rb = b;
   return rb->position - ra->position;
 }
 
-int reindeer_score_cmp(const void* a, const void* b) {
+int reindeer_score_cmp(const void* a, const void* b, void* unused) {
+  (void)unused;
   const reindeer_t* ra = a;
   const reindeer_t* rb = b;
   return rb->score - ra->score;
