@@ -31,14 +31,10 @@ advent::Set::Bucket* advent::Set::FindBucket(Bucket* data, std::size_t capacity,
 advent::Set::Set() : data(nullptr), length(0), capacity(0) {}
 
 void advent::Set::Free() {
-  if (data != nullptr) {
-    for (std::size_t i = 0; i < capacity; ++i) {
-      if (data[i].key != nullptr) {
-        std::free(data[i].key);
-      }
-    }
-    std::free(data);
+  for (std::size_t i = 0; i < capacity; ++i) {
+    std::free(data[i].key);
   }
+  std::free(data);
   data = nullptr;
   length = 0;
   capacity = 0;
