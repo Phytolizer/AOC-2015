@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
 #include "advent/internal/constutils.hwn"
 
@@ -25,4 +26,6 @@ constexpr std::size_t ArraySize(const T (&)[N]) {
   return N;
 }
 long MinLongElement(const long* begin, const long* end);
+std::int16_t IntegerLog10(std::uint64_t x);
+void IntegerToString(std::size_t x, char* buffer, std::size_t buffer_length);
 }  // namespace advent
