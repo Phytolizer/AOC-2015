@@ -30,22 +30,33 @@ advent_combinatorics_sum_comb_t advent_combinatorics_first_sum_comb(int n,
 
 bool advent_combinatorics_next_sum_comb(advent_combinatorics_sum_comb_t* comb,
                                         int sum) {
+  // the final combination will start with a large number and end with all 1s.
+  // the second half of the || checks for this case.
   if (comb->length <= 1 || comb->data[0] >= sum - (comb->length - 1)) {
     return false;
   }
   size_t i = comb->length - 2;
-  // Due to the above check, an infinite loop will definitely terminate.
+  // due to the above check, an infinite loop will definitely terminate.
+  //
+  // go through each prior element and wrap around if necessary.
   while (true) {
     comb->data[i]++;
+    // the max sum of comb[..i] is sum - (comb.length - 1 - i).
+    // this is assuming comb[i + 1..] is all 1s, which it will be by the time
+    // the limit is reached.
     if (!check_limit(comb, i + 1, sum - (comb->length - 1 - i))) {
-      // update last element
+      // if the sum is less than that, then we have found the next combination.
+      // update last element, it's always sum - sum(comb[..-1]).
       int partial = 0;
       for (size_t j = 0; j < comb->length - 1; ++j) {
         partial += comb->data[j];
       }
       comb->data[comb->length - 1] = sum - partial;
+      // because of constraints we expressed by calling check_limit, we know
+      // that sum - partial is positive.
       return true;
     }
+    // we hit a limit -- wrap back to 1 and move on to the next element.
     comb->data[i] = 1;
     --i;
   }
