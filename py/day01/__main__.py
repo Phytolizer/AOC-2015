@@ -1,6 +1,6 @@
 import os
 
-with open(os.path.dirname(os.path.realpath(__file__)) + "/input.txt") as f:
+with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "/input.txt")) as f:
     data = f.read().strip()
 
 floor = 0
