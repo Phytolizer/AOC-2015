@@ -1,6 +1,7 @@
 #include "advent/combinatorics.h"
 
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -36,17 +37,13 @@ bool advent_combinatorics_next_sum_comb(advent_combinatorics_sum_comb_t* comb,
   // Due to the above check, an infinite loop will definitely terminate.
   while (true) {
     comb->data[i]++;
-    if (!check_limit(comb, i + 1, sum)) {
+    if (!check_limit(comb, i + 1, sum - (comb->length - 1 - i))) {
       // update last element
       int partial = 0;
       for (size_t j = 0; j < comb->length - 1; ++j) {
         partial += comb->data[j];
       }
       comb->data[comb->length - 1] = sum - partial;
-      if (sum - partial <= 0) {
-        // numbers got too large, try again
-        return advent_combinatorics_next_sum_comb(comb, sum);
-      }
       return true;
     }
     comb->data[i] = 1;
