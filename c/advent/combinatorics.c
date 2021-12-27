@@ -6,6 +6,7 @@
 #include <string.h>
 
 DEFINE_VECTOR(advent_combinatorics_sum_comb_t, int);
+DEFINE_VECTOR(advent_combinatorics_comb_t, size_t);
 
 static bool check_limit(advent_combinatorics_sum_comb_t* comb, size_t n,
                         int limit);
@@ -60,6 +61,40 @@ bool advent_combinatorics_next_sum_comb(advent_combinatorics_sum_comb_t* comb,
     comb->data[i] = 1;
     --i;
   }
+}
+
+advent_combinatorics_comb_t advent_combinatorics_first_comb(int n, int r) {
+  advent_combinatorics_comb_t result;
+  advent_combinatorics_comb_t_init(&result);
+  if (r == 0 || r > n) {
+    return result;
+  }
+  for (size_t i = 0; i < r; ++i) {
+    advent_combinatorics_comb_t_push(&result, i);
+  }
+  return result;
+}
+
+bool advent_combinatorics_next_comb(advent_combinatorics_comb_t* comb, int n) {
+  bool found = false;
+  size_t i;
+  for (i = comb->length - 1;; --i) {
+    if (comb->data[i] != i + n - comb->length) {
+      found = true;
+      break;
+    }
+    if (i == 0) {
+      break;
+    }
+  }
+  if (!found) {
+    return false;
+  }
+  comb->data[i]++;
+  for (size_t j = i + 1; j < comb->length; ++j) {
+    comb->data[j] = comb->data[j - 1] + 1;
+  }
+  return true;
 }
 
 static bool check_limit(advent_combinatorics_sum_comb_t* comb, size_t n,
