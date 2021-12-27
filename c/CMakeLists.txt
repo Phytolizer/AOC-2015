@@ -19,7 +19,7 @@ FetchContent_MakeAvailable("pcre")
 
 add_library(
   "advent-c" "advent/advent.c" "advent/set.c" "advent/permute.c"
-           "advent/string.c"
+             "advent/string.c" "advent/combinatorics.c"
 )
 target_include_directories("advent-c" PUBLIC "advent/inc")
 
@@ -57,3 +57,5 @@ advent("day13")
 target_link_libraries("day13-c" PRIVATE "pcre2-8")
 advent("day14")
 target_link_libraries("day14-c" PRIVATE "pcre2-8")
+advent("day15")
+target_link_libraries("day15-c" PRIVATE "pcre2-8")
