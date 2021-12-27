@@ -39,3 +39,4 @@ target_compile_features("advent-cwn" PUBLIC "cxx_std_20")
 workaround_file_extension(${ADVENT_LIB_SOURCES})
 
 advent(day01-cwn)
+advent(day02-cwn LIBRARIES pcre2-8)

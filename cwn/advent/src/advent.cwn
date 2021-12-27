@@ -1,5 +1,9 @@
+#include <assert.h>
+
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <limits>
 
 #include "advent.hwn"
 
@@ -16,4 +20,57 @@ char* advent::ReadEntireFile(const char* filename) {
   buffer[size] = '\0';
   std::fclose(fp);
   return buffer;
+}
+
+char* advent::StringDuplicate(const char* str) {
+  std::size_t size = std::strlen(str);
+  char* buffer = (char*)std::malloc(size + 1);
+  std::strcpy(buffer, str);
+  return buffer;
+}
+
+char* advent::StringDuplicateN(const char* str, std::size_t n) {
+  char* buffer = (char*)std::malloc(n + 1);
+  std::strncpy(buffer, str, n);
+  buffer[n] = '\0';
+  return buffer;
+}
+
+void* advent::MemoryDuplicate(const void* ptr, std::size_t size) {
+  void* buffer = std::malloc(size);
+  std::memcpy(buffer, ptr, size);
+  return buffer;
+}
+
+long advent::StringToLongRange(const char* begin, const char* end,
+                               char** endptr, int base) {
+  char* buffer = StringDuplicateN(begin, end - begin);
+  long result = std::strtol(buffer, endptr, base);
+  // move endptr to point to the original string
+  *endptr = const_cast<char*>(begin + (*endptr - buffer));
+  std::free(buffer);
+  return result;
+}
+
+long advent::StringToLongRangeChecked(const char* begin, const char* end,
+                                      int base) {
+  char* endptr;
+  long result = std::strtol(begin, &endptr, base);
+  if (endptr != end) {
+    assert(end - begin <= std::numeric_limits<int>::max());
+    std::printf("Failed to parse string: '%.*s'\n",
+                static_cast<int>(end - begin), begin);
+    std::exit(1);
+  }
+  return result;
+}
+
+long advent::MinLongElement(const long* begin, const long* end) {
+  long min = *begin;
+  for (const long* it = begin + 1; it != end; ++it) {
+    if (*it < min) {
+      min = *it;
+    }
+  }
+  return min;
 }

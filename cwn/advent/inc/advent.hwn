@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 #include "advent/internal/constutils.hwn"
 
 #if __has_include(<config.hwn>)
@@ -12,4 +14,15 @@ constexpr const auto kInput = internal::constutils::Concat(
 
 namespace advent {
 char* ReadEntireFile(const char* filename);
+char* StringDuplicate(const char* str);
+char* StringDuplicateN(const char* str, std::size_t n);
+void* MemoryDuplicate(const void* ptr, std::size_t size);
+long StringToLongRange(const char* begin, const char* end, char** endptr,
+                       int base);
+long StringToLongRangeChecked(const char* begin, const char* end, int base);
+template <typename T, std::size_t N>
+constexpr std::size_t ArraySize(const T (&)[N]) {
+  return N;
+}
+long MinLongElement(const long* begin, const long* end);
 }  // namespace advent

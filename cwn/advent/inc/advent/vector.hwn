@@ -1,0 +1,40 @@
+#pragma once
+
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
+#include <utility>
+
+namespace advent {
+template <typename T>
+struct Vector {
+  T* data;
+  std::size_t length;
+  std::size_t capacity;
+
+  Vector() : data(nullptr), length(0), capacity(0) {}
+  void Push(const T& value) {
+    if (length == capacity) {
+      capacity = capacity == 0 ? 1 : capacity * 2;
+      data = (T*)std::realloc(data, capacity * sizeof(T));
+    }
+    data[length++] = value;
+  }
+  T Pop() { return data[--length]; }
+  Vector Dup() const {
+    Vector result = {
+        .data = (T*)std::malloc(length * sizeof(T)),
+        .length = length,
+        .capacity = capacity,
+    };
+    std::memcpy(result.data, data, length * sizeof(T));
+    return result;
+  }
+  void Free() {
+    std::free(data);
+    data = nullptr;
+    length = 0;
+    capacity = 0;
+  }
+};
+}  // namespace advent
