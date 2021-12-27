@@ -11,6 +11,8 @@ int main() {
 
   int c;
   long floor = 0;
+  std::size_t position = 1;
+  std::size_t underground_position = 0;
   while ((c = std::fgetc(fp)) != EOF) {
     switch (c) {
       case '(':
@@ -18,13 +20,18 @@ int main() {
         break;
       case ')':
         floor--;
+        if (floor < 0 && underground_position == 0) {
+          underground_position = position;
+        }
         break;
       default:
         break;
     }
+    ++position;
   }
 
   std::printf("Final floor: %ld\n", floor);
+  std::printf("Position of first basement: %ld\n", underground_position);
   std::fclose(fp);
   return 0;
 }
