@@ -1,0 +1,3 @@
+#include <advent.hwn>
+
+int main() { return 0; }

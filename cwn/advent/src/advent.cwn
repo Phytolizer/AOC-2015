@@ -1,0 +1,19 @@
+#include <cstdio>
+#include <cstdlib>
+
+#include "advent.hwn"
+
+char* advent::ReadEntireFile(const char* filename) {
+  std::FILE* fp = std::fopen(filename, "r");
+  if (!fp) {
+    return nullptr;
+  }
+  std::fseek(fp, 0, SEEK_END);
+  long size = std::ftell(fp);
+  std::fseek(fp, 0, SEEK_SET);
+  char* buffer = (char*)std::malloc(size + 1);
+  std::fread(buffer, 1, size, fp);
+  buffer[size] = '\0';
+  std::fclose(fp);
+  return buffer;
+}

@@ -1,0 +1,15 @@
+#pragma once
+
+#include "advent/internal/constutils.hwn"
+
+#if __has_include(<config.hwn>)
+#include <config.hwn>
+namespace advent {
+constexpr const auto kInput = internal::constutils::Concat(
+    cmake::kCurrentSourceDir, "/", cmake::kTarget, "/input.txt");
+}  // namespace advent
+#endif
+
+namespace advent {
+char* ReadEntireFile(const char* filename);
+}  // namespace advent

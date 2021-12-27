@@ -1,0 +1,6 @@
+#pragma once
+
+namespace cmake {
+constexpr const char kTarget[] = "@CMAKE_TARGET@";
+constexpr const char kCurrentSourceDir[] = "@CMAKE_CURRENT_SOURCE_DIR@";
+} // namespace cmake
