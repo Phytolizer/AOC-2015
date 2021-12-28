@@ -135,3 +135,17 @@ int advent::GetLine(char** buffer, std::size_t* buffer_length, std::FILE* fp) {
   }
   return -1;
 }
+
+bool advent::GetLineVec(Vector<char>* buffer, std::FILE* fp) {
+  bool ret = false;
+  int c;
+  while ((c = std::fgetc(fp)) != EOF) {
+    ret = true;
+    if (c == '\n') {
+      buffer->Push('\0');
+      break;
+    }
+    buffer->Push((char)c);
+  }
+  return ret;
+}

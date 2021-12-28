@@ -41,19 +41,18 @@ int main() {
     light_field.Push(line);
   }
 
-  char* line = nullptr;
-  std::size_t line_len = 0;
-  while (advent::GetLine(&line, &line_len, fp) != -1) {
-    if (pcre2_match(code, (PCRE2_SPTR)line, PCRE2_ZERO_TERMINATED, 0, 0,
+  advent::Vector<char> line;
+  while (advent::GetLineVec(&line, fp)) {
+    if (pcre2_match(code, (PCRE2_SPTR)line.data, PCRE2_ZERO_TERMINATED, 0, 0,
                     match_data, nullptr) < 0) {
-      std::printf("PCRE2 match failed: %s\n", line);
+      std::printf("PCRE2 match failed: %s\n", line.data);
       return 1;
     }
 
     PCRE2_SIZE* ovector = pcre2_get_ovector_pointer(match_data);
   }
 
-  std::free(line);
+  line.Free();
   for (std::size_t i = 0; i < light_field.length; ++i) {
     light_field.data[i].Free();
   }
