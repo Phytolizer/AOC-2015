@@ -1,5 +1,6 @@
 #include <assert.h>
 
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -98,7 +99,8 @@ std::int16_t advent::IntegerLog10(std::uint64_t x) {
   return estimated_log10 + (std::int16_t)(x >= kIntegerPow10[estimated_log10]);
 }
 
-void advent::IntegerToString(std::size_t x, char* buffer, std::size_t buffer_length) {
+void advent::IntegerToString(std::size_t x, char* buffer,
+                             std::size_t buffer_length) {
   constexpr char kDigits[] = "0123456789";
   char* p = buffer + buffer_length;
   do {
@@ -106,4 +108,30 @@ void advent::IntegerToString(std::size_t x, char* buffer, std::size_t buffer_len
     *p = kDigits[x % 10];
     x /= 10;
   } while (x != 0);
+}
+
+int advent::GetLine(char** buffer, std::size_t* buffer_length, std::FILE* fp) {
+  char* p = *buffer;
+  char* end = *buffer + *buffer_length;
+  int c;
+  while ((c = std::fgetc(fp)) != EOF) {
+    if (p == end) {
+      if (*buffer_length == 0 || *buffer == NULL) {
+        *buffer_length = 16;
+        *buffer = (char*)std::malloc(*buffer_length);
+        p = *buffer;
+      } else {
+        *buffer_length *= 2;
+        *buffer = (char*)std::realloc(*buffer, *buffer_length);
+        p = *buffer + (*buffer_length / 2);
+      }
+      end = *buffer + *buffer_length;
+    }
+    if (c == '\n') {
+      *p = '\0';
+      return 0;
+    }
+    *p++ = (char)c;
+  }
+  return -1;
 }

@@ -43,10 +43,10 @@ int main() {
 
   char* line = nullptr;
   std::size_t line_len = 0;
-  while (getline(&line, &line_len, fp) != -1) {
+  while (advent::GetLine(&line, &line_len, fp) != -1) {
     if (pcre2_match(code, (PCRE2_SPTR)line, PCRE2_ZERO_TERMINATED, 0, 0,
                     match_data, nullptr) < 0) {
-      std::printf("PCRE2 match failed\n");
+      std::printf("PCRE2 match failed: %s\n", line);
       return 1;
     }
 
