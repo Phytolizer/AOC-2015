@@ -22,7 +22,7 @@ function(advent TARGET)
   target_link_libraries("${TARGET}" PRIVATE "advent-cwn" ${ADVENT_LIBRARIES})
   set(CMAKE_TARGET "${TARGET_FOLDER}")
   configure_file(
-    "config.hwn.cin" "${PROJECT_BINARY_DIR}/${TARGET_FOLDER}/config.hwn"
+    "../config.hwn.cin" "${PROJECT_BINARY_DIR}/${TARGET_FOLDER}/config.hwn"
   )
   target_include_directories(
     "${TARGET}"
@@ -32,17 +32,11 @@ function(advent TARGET)
   set_target_properties("${TARGET}" PROPERTIES LINKER_LANGUAGE "CXX")
 endfunction()
 
-set(ADVENT_LIB_SOURCES "advent/src/advent.cwn" "advent/src/hash.cwn"
-                       "advent/src/set.cwn"
-)
+set(ADVENT_LIB_SOURCES "advent.cwn" "hash.cwn" "set.cwn")
+list(TRANSFORM ADVENT_LIB_SOURCES PREPEND "advent/src/")
 add_library("advent-cwn" ${ADVENT_LIB_SOURCES})
 target_include_directories("advent-cwn" PUBLIC "advent/inc")
 target_compile_features("advent-cwn" PUBLIC "cxx_std_20")
 workaround_file_extension(${ADVENT_LIB_SOURCES})
 
-advent(day01-cwn)
-advent(day02-cwn LIBRARIES pcre2-8)
-advent(day03-cwn)
-advent(day04-cwn LIBRARIES crypto)
-advent(day05-cwn)
-advent(day06-cwn LIBRARIES pcre2-8)
+add_subdirectory(2015)
