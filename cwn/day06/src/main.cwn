@@ -1,9 +1,15 @@
 #include <advent.hwn>
 #include <advent/pcre.hwn>
+#include <advent/vector.hwn>
 #include <cstddef>
 #include <cstdio>
+#include <cstring>
 
-#include "advent/vector.hwn"
+enum struct Mode {
+  kTurnOn,
+  kTurnOff,
+  kToggle,
+};
 
 int main() {
   std::FILE* fp = std::fopen(advent::kInput.data, "r");
@@ -50,7 +56,55 @@ int main() {
     }
 
     PCRE2_SIZE* ovector = pcre2_get_ovector_pointer(match_data);
+    Mode mode;
+    char* mode_str = line.data + ovector[2];
+    if (std::strncmp(mode_str, "turn on", ovector[3] - ovector[2]) == 0) {
+      mode = Mode::kTurnOn;
+    } else if (std::strncmp(mode_str, "turn off", ovector[3] - ovector[2]) ==
+               0) {
+      mode = Mode::kTurnOff;
+    } else if (std::strncmp(mode_str, "toggle", ovector[3] - ovector[2]) == 0) {
+      mode = Mode::kToggle;
+    } else {
+      std::fprintf(stderr, "Unreachable code: %.*s\n",
+                   (int)(ovector[3] - ovector[2]), mode_str);
+      return 1;
+    }
+
+    long start_x = advent::StringToLongRangeChecked(line.data + ovector[4],
+                                                    line.data + ovector[5], 10);
+    long start_y = advent::StringToLongRangeChecked(line.data + ovector[6],
+                                                    line.data + ovector[7], 10);
+    long end_x = advent::StringToLongRangeChecked(line.data + ovector[8],
+                                                  line.data + ovector[9], 10);
+    long end_y = advent::StringToLongRangeChecked(line.data + ovector[10],
+                                                  line.data + ovector[11], 10);
+    for (long x = start_x; x <= end_x; ++x) {
+      for (long y = start_y; y <= end_y; ++y) {
+        switch (mode) {
+          case Mode::kTurnOn:
+            light_field.data[x].data[y] = true;
+            break;
+          case Mode::kTurnOff:
+            light_field.data[x].data[y] = false;
+            break;
+          case Mode::kToggle:
+            light_field.data[x].data[y] = !light_field.data[x].data[y];
+            break;
+        }
+      }
+    }
   }
+
+  std::size_t total_brightness = 0;
+  for (std::size_t i = 0; i < light_field.length; ++i) {
+    for (std::size_t j = 0; j < light_field.data[i].length; ++j) {
+      if (light_field.data[i].data[j]) {
+        ++total_brightness;
+      }
+    }
+  }
+  std::printf("Total brightness: %zu\n", total_brightness);
 
   line.Free();
   for (std::size_t i = 0; i < light_field.length; ++i) {
