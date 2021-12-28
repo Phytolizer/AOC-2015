@@ -9,9 +9,9 @@ static bool IsNice(const char* line);
 static bool IsNice2(advent::StringView line);
 
 int main() {
-  std::FILE* fp = std::fopen(advent::kInput.data(), "r");
+  std::FILE* fp = std::fopen(advent::kInput.data, "r");
   if (fp == nullptr) {
-    std::printf("Failed to open file: %s\n", advent::kInput.data());
+    std::printf("Failed to open file: %s\n", advent::kInput.data);
     return 1;
   }
 

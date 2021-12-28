@@ -28,10 +28,10 @@ int main() {
   std::size_t num_visited = 1;
   std::size_t num_visited_2 = 1;
 
-  std::FILE* fp = std::fopen(advent::kInput.data(), "r");
+  std::FILE* fp = std::fopen(advent::kInput.data, "r");
   if (fp == nullptr) {
     std::fprintf(stderr, "Failed to open input file: %s\n",
-                 advent::kInput.data());
+                 advent::kInput.data);
     return 1;
   }
   int c;

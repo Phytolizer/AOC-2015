@@ -1,0 +1,11 @@
+#pragma once
+
+#include <cstddef>
+namespace advent::internal {
+template <typename T, std::size_t Size>
+struct Array {
+  T data[Size];
+
+  constexpr const T& operator[](std::size_t i) const { return data[i]; }
+};
+}  // namespace advent::internal

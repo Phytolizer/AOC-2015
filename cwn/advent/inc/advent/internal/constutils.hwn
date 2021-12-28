@@ -1,8 +1,9 @@
 #pragma once
 
-#include <array>
 #include <cstddef>
-#include <type_traits>
+
+#include "advent/internal/array.hwn"
+#include "advent/internal/typetraits.hwn"
 
 namespace advent::internal::constutils {
 template <unsigned...>
@@ -17,19 +18,19 @@ template <unsigned N>
 using GenSeq = typename GenSeqX<N>::Type;
 
 template <std::size_t S>
-using Size = std::integral_constant<std::size_t, S>;
+using Size = IntegralConstant<std::size_t, S>;
 
 template <class T, std::size_t N>
 constexpr Size<N> Length(const T (&)[N]) {
   return {};
 }
 template <class T, std::size_t N>
-constexpr Size<N> Length(const std::array<T, N>&) {
+constexpr Size<N> Length(const Array<T, N>&) {
   return {};
 }
 
 template <class T>
-using LengthT = decltype(Length(std::declval<T>()));
+using LengthT = decltype(Length(DeclVal<T>()));
 
 constexpr std::size_t StringSize() { return 0; }
 template <class... Ts>
@@ -39,18 +40,18 @@ constexpr std::size_t StringSize(std::size_t i, Ts... ts) {
 template <class... Ts>
 using StringLength = Size<StringSize(LengthT<Ts>{}...)>;
 template <class... Ts>
-using String = std::array<char, StringLength<Ts...>{} + 1>;
+using String = Array<char, StringLength<Ts...>{} + 1>;
 
 template <class Lhs, class Rhs, unsigned... I1, unsigned... I2>
 constexpr const String<Lhs, Rhs> ConcatImpl(const Lhs& lhs, const Rhs& rhs,
-                                             Seq<I1...>, Seq<I2...>) {
+                                            Seq<I1...>, Seq<I2...>) {
   return {{lhs[I1]..., rhs[I2]..., '\0'}};
 }
 
 template <class Lhs, class Rhs>
 constexpr const String<Lhs, Rhs> Concat(const Lhs& lhs, const Rhs& rhs) {
   return ConcatImpl(lhs, rhs, GenSeq<StringLength<Lhs>{}>{},
-                     GenSeq<StringLength<Rhs>{}>{});
+                    GenSeq<StringLength<Rhs>{}>{});
 }
 
 template <class T0, class T1, class... Ts>
@@ -66,4 +67,4 @@ constexpr const String<T> Concat(const T& t) {
 
 constexpr const String<> Concat() { return Concat(""); }
 
-}  // namespace advent::internal::constconcat
+}  // namespace advent::internal::constutils

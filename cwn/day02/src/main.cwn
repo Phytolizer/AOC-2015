@@ -7,9 +7,9 @@
 #include <string>
 
 int main() {
-  std::FILE* fp = std::fopen(advent::kInput.data(), "r");
+  std::FILE* fp = std::fopen(advent::kInput.data, "r");
   if (!fp) {
-    std::printf("Failed to open input file: %s\n", advent::kInput.data());
+    std::printf("Failed to open input file: %s\n", advent::kInput.data);
     return 1;
   }
 
