@@ -104,7 +104,11 @@ int main(void) {
     }
     advent_qsort_r(reindeer.data, reindeer.length, sizeof(reindeer_t),
                    reindeer_position_cmp, NULL);
-    reindeer.data[0].score++;
+    size_t position = reindeer.data[0].position;
+    for (size_t i = 0; reindeer.data[i].position == position; ++i) {
+      reindeer_t* r = reindeer.data + i;
+      r->score++;
+    }
   }
 
   advent_qsort_r(reindeer.data, reindeer.length, sizeof(reindeer_t),

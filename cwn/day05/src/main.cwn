@@ -1,0 +1,68 @@
+#include <advent.hwn>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+
+static bool IsNice(const char* line);
+static bool IsNice2(const char* line);
+
+int main() {
+  std::FILE* fp = std::fopen(advent::kInput.data(), "r");
+  if (fp == nullptr) {
+    std::printf("Failed to open file: %s\n", advent::kInput.data());
+    return 1;
+  }
+
+  char* line = nullptr;
+  std::size_t line_len = 0;
+  std::size_t num_nice = 0;
+  std::size_t num_nice_2 = 0;
+  while (getline(&line, &line_len, fp) != -1) {
+    if (IsNice(line)) {
+      ++num_nice;
+    }
+    if (IsNice2(line)) {
+      ++num_nice_2;
+    }
+  }
+
+  std::printf("Part 1: %zu\n", num_nice);
+  std::printf("Part 2: %zu\n", num_nice_2);
+
+  std::free(line);
+  std::fclose(fp);
+  return 0;
+}
+
+static bool IsNice(const char* line) {
+  bool has_double = false;
+  bool has_bad_pair = false;
+  std::size_t num_vowels = 0;
+  char pc = '\0';
+  for (std::size_t i = 0; line[i] != '\n' && line[i] != '\0'; ++i) {
+    char c = line[i];
+    if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+      ++num_vowels;
+    }
+    if (pc == c) {
+      has_double = true;
+    }
+    if (pc == 'a' && c == 'b') {
+      has_bad_pair = true;
+    }
+    if (pc == 'c' && c == 'd') {
+      has_bad_pair = true;
+    }
+    if (pc == 'p' && c == 'q') {
+      has_bad_pair = true;
+    }
+    if (pc == 'x' && c == 'y') {
+      has_bad_pair = true;
+    }
+    pc = c;
+  }
+  return has_double && !has_bad_pair && num_vowels >= 3;
+}
+
+static bool IsNice2(const char* line) {
+}
