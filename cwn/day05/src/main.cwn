@@ -1,10 +1,12 @@
 #include <advent.hwn>
+#include <advent/view.hwn>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 
 static bool IsNice(const char* line);
-static bool IsNice2(const char* line);
+static bool IsNice2(advent::StringView line);
 
 int main() {
   std::FILE* fp = std::fopen(advent::kInput.data(), "r");
@@ -21,7 +23,7 @@ int main() {
     if (IsNice(line)) {
       ++num_nice;
     }
-    if (IsNice2(line)) {
+    if (IsNice2({line, line + std::strlen(line)})) {
       ++num_nice_2;
     }
   }
@@ -64,5 +66,33 @@ static bool IsNice(const char* line) {
   return has_double && !has_bad_pair && num_vowels >= 3;
 }
 
-static bool IsNice2(const char* line) {
+static bool HasPair(advent::StringView pool, advent::StringView pair) {
+  char pc = '\0';
+  for (char* c = pool.begin; c < pool.end; ++c) {
+    if (pc == pair.begin[0] && *c == pair.begin[1]) {
+      return true;
+    }
+    pc = *c;
+  }
+  return false;
+}
+
+static bool IsNice2(advent::StringView line) {
+  bool has_two_pair = false;
+  for (char* pair_start = line.begin; pair_start < line.end - 1; ++pair_start) {
+    advent::StringView pair{pair_start, pair_start + 2};
+    if (HasPair(advent::StringView{line.begin, pair_start}, pair) ||
+        HasPair(advent::StringView{pair_start + 2, line.end}, pair)) {
+      has_two_pair = true;
+      break;
+    }
+  }
+  bool has_separated_repetition = false;
+  for (char* rep_start = line.begin; rep_start < line.end - 2; ++rep_start) {
+    if (rep_start[0] == rep_start[2]) {
+      has_separated_repetition = true;
+      break;
+    }
+  }
+  return has_two_pair && has_separated_repetition;
 }
