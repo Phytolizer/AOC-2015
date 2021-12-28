@@ -32,7 +32,9 @@ function(advent TARGET)
   set_target_properties("${TARGET}" PROPERTIES LINKER_LANGUAGE "CXX")
 endfunction()
 
-set(ADVENT_LIB_SOURCES "advent/src/advent.cwn" "advent/src/set.cwn")
+set(ADVENT_LIB_SOURCES "advent/src/advent.cwn" "advent/src/hash.cwn"
+                       "advent/src/set.cwn"
+)
 add_library("advent-cwn" ${ADVENT_LIB_SOURCES})
 target_include_directories("advent-cwn" PUBLIC "advent/inc")
 target_compile_features("advent-cwn" PUBLIC "cxx_std_20")

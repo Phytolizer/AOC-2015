@@ -1,0 +1,11 @@
+#include "advent/internal/hash.hwn"
+
+std::uint64_t advent::internal::hash::Hash(const void* key,
+                                           std::size_t key_length) {
+  std::uint64_t hash = kFnvOffsetBasis;
+  for (std::size_t i = 0; i < key_length; ++i) {
+    hash ^= ((std::uint8_t*)key)[i];
+    hash *= kFnvPrime;
+  }
+  return hash;
+}

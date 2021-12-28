@@ -4,21 +4,13 @@
 #include <cstring>
 
 #include "advent.hwn"
+#include "advent/internal/hash.hwn"
 #include "advent/set.hwn"
-
-std::uint64_t advent::Set::Hash(const void* key, std::size_t key_length) {
-  std::uint64_t hash = kFnvOffsetBasis;
-  for (std::size_t i = 0; i < key_length; ++i) {
-    hash ^= ((std::uint8_t*)key)[i];
-    hash *= kFnvPrime;
-  }
-  return hash;
-}
 
 advent::Set::Bucket* advent::Set::FindBucket(Bucket* data, std::size_t capacity,
                                              const void* key,
                                              std::size_t key_length) const {
-  std::uint64_t hash_value = Hash(key, key_length);
+  std::uint64_t hash_value = internal::hash::Hash(key, key_length);
   std::size_t index = hash_value % capacity;
   while (data[index].key != nullptr &&
          !(data[index].key_length == key_length &&
