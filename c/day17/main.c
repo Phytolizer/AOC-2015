@@ -1,6 +1,7 @@
 #include <advent.h>
 #include <advent/combinatorics.h>
 #include <advent/vector.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +25,8 @@ int main(void) {
   }
 
   size_t counter = 0;
+  size_t min_count = 0;
+  size_t min_size = SIZE_MAX;
   for (size_t r = 1; r < container_sizes.length; ++r) {
     advent_combinatorics_comb_t comb =
         advent_combinatorics_first_comb(container_sizes.length, r);
@@ -34,9 +37,16 @@ int main(void) {
       }
       if (sum == 150) {
         ++counter;
+        if (comb.length < min_size) {
+          min_size = comb.length;
+          min_count = 1;
+        } else if (comb.length == min_size) {
+          ++min_count;
+        }
       }
     } while (advent_combinatorics_next_comb(&comb, container_sizes.length));
   }
   printf("%zu\n", counter);
+  printf("%zu\n", min_count);
   free(line);
 }
