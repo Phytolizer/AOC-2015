@@ -83,13 +83,13 @@ int main() {
       for (long y = start_y; y <= end_y; ++y) {
         switch (mode) {
           case Mode::kTurnOn:
-            light_field.data[x].data[y] = true;
+            light_field.data[y].data[x] = true;
             break;
           case Mode::kTurnOff:
-            light_field.data[x].data[y] = false;
+            light_field.data[y].data[x] = false;
             break;
           case Mode::kToggle:
-            light_field.data[x].data[y] = !light_field.data[x].data[y];
+            light_field.data[y].data[x] = !light_field.data[y].data[x];
             break;
         }
       }
