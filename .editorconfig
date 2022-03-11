@@ -6,3 +6,14 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 4
 
+[*.{c,h}]
+indent_style = space
+indent_size = 4
+
+[*.{cpp,hpp}]
+indent_style = space
+indent_size = 4
+
+[*.{cwn,hwn}]
+indent_style = space
+indent_size = 4

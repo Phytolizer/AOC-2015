@@ -6,8 +6,8 @@
 #include "advent/vector.h"
 
 typedef struct {
-  size_t index;
-  int direction;
+    size_t index;
+    int direction;
 } permutation_element_t;
 
 DECLARE_VECTOR(permutation_t, permutation_element_t);

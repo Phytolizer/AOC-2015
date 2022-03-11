@@ -7,91 +7,92 @@
 #include <string>
 
 int main() {
-  std::FILE* fp = std::fopen(advent::kInput.data, "r");
-  if (!fp) {
-    std::printf("Failed to open input file: %s\n", advent::kInput.data);
-    return 1;
-  }
-
-  int error_code;
-  std::size_t error_offset;
-  pcre2_code* re =
-      pcre2_compile(reinterpret_cast<PCRE2_SPTR>(R"re((\d+)x(\d+)x(\d+))re"),
-                    PCRE2_ZERO_TERMINATED, PCRE2_CASELESS, &error_code,
-                    &error_offset, nullptr);
-  if (re == nullptr) {
-    PCRE2_UCHAR buf[256];
-    pcre2_get_error_message(error_code, buf, sizeof(buf));
-    std::printf("Failed to compile regex: %s\n", buf);
-    return 1;
-  }
-
-  pcre2_match_data* match_data =
-      pcre2_match_data_create_from_pattern(re, nullptr);
-  if (match_data == nullptr) {
-    std::printf("Failed to create match data\n");
-    return 1;
-  }
-
-  size_t part_1_result = 0;
-  size_t part_2_result = 0;
-
-  char* line = nullptr;
-  std::size_t line_length = 0;
-  while (getline(&line, &line_length, fp) != -1) {
-    int rc = pcre2_match(re, reinterpret_cast<PCRE2_SPTR>(line),
-                         PCRE2_ZERO_TERMINATED, 0, 0, match_data, nullptr);
-    if (rc < 0) {
-      std::printf("Failed to match line: %s\n", line);
-      return 1;
+    std::FILE* fp = std::fopen(advent::kInput.data, "r");
+    if (!fp) {
+        std::printf("Failed to open input file: %s\n", advent::kInput.data);
+        return 1;
     }
 
-    PCRE2_SIZE* ovector = pcre2_get_ovector_pointer(match_data);
-    long l = advent::StringToLongRangeChecked(line + ovector[2],
-                                              line + ovector[3], 10);
-    long w = advent::StringToLongRangeChecked(line + ovector[4],
-                                              line + ovector[5], 10);
-    long h = advent::StringToLongRangeChecked(line + ovector[6],
-                                              line + ovector[7], 10);
+    int error_code;
+    std::size_t error_offset;
+    pcre2_code* re =
+        pcre2_compile(reinterpret_cast<PCRE2_SPTR>(R"re((\d+)x(\d+)x(\d+))re"),
+                      PCRE2_ZERO_TERMINATED, PCRE2_CASELESS, &error_code,
+                      &error_offset, nullptr);
+    if (re == nullptr) {
+        PCRE2_UCHAR buf[256];
+        pcre2_get_error_message(error_code, buf, sizeof(buf));
+        std::printf("Failed to compile regex: %s\n", buf);
+        return 1;
+    }
 
-    long sides[] = {
-        l * w,
-        w * h,
-        h * l,
-    };
-    long smallest_side =
-        advent::MinLongElement(sides, sides + advent::ArraySize(sides));
-    long surface_area = 2 * (sides[0] + sides[1] + sides[2]) + smallest_side;
-    part_1_result += surface_area;
+    pcre2_match_data* match_data =
+        pcre2_match_data_create_from_pattern(re, nullptr);
+    if (match_data == nullptr) {
+        std::printf("Failed to create match data\n");
+        return 1;
+    }
 
-    long edges[] = {
-        l,
-        w,
-        h,
-    };
+    size_t part_1_result = 0;
+    size_t part_2_result = 0;
 
-    advent::Vector<long> ribbon_lengths;
-    for (std::size_t i = 0; i < advent::ArraySize(edges); ++i) {
-      for (std::size_t j = 0; j < advent::ArraySize(edges); ++j) {
-        if (i == j) {
-          continue;
+    char* line = nullptr;
+    std::size_t line_length = 0;
+    while (getline(&line, &line_length, fp) != -1) {
+        int rc = pcre2_match(re, reinterpret_cast<PCRE2_SPTR>(line),
+                             PCRE2_ZERO_TERMINATED, 0, 0, match_data, nullptr);
+        if (rc < 0) {
+            std::printf("Failed to match line: %s\n", line);
+            return 1;
         }
-        ribbon_lengths.Push(2 * (edges[i] + edges[j]));
-      }
+
+        PCRE2_SIZE* ovector = pcre2_get_ovector_pointer(match_data);
+        long l = advent::StringToLongRangeChecked(line + ovector[2],
+                                                  line + ovector[3], 10);
+        long w = advent::StringToLongRangeChecked(line + ovector[4],
+                                                  line + ovector[5], 10);
+        long h = advent::StringToLongRangeChecked(line + ovector[6],
+                                                  line + ovector[7], 10);
+
+        long sides[] = {
+            l * w,
+            w * h,
+            h * l,
+        };
+        long smallest_side =
+            advent::MinLongElement(sides, sides + advent::ArraySize(sides));
+        long surface_area =
+            2 * (sides[0] + sides[1] + sides[2]) + smallest_side;
+        part_1_result += surface_area;
+
+        long edges[] = {
+            l,
+            w,
+            h,
+        };
+
+        advent::Vector<long> ribbon_lengths;
+        for (std::size_t i = 0; i < advent::ArraySize(edges); ++i) {
+            for (std::size_t j = 0; j < advent::ArraySize(edges); ++j) {
+                if (i == j) {
+                    continue;
+                }
+                ribbon_lengths.Push(2 * (edges[i] + edges[j]));
+            }
+        }
+        part_2_result += advent::MinLongElement(ribbon_lengths.data,
+                                                ribbon_lengths.data +
+                                                    ribbon_lengths.length) +
+                         l * w * h;
+        ribbon_lengths.Free();
     }
-    part_2_result +=
-        advent::MinLongElement(ribbon_lengths.data,
-                               ribbon_lengths.data + ribbon_lengths.length) +
-        l * w * h;
-    ribbon_lengths.Free();
-  }
 
-  std::printf("Part 1: %zu\n", part_1_result);
-  std::printf("Part 2: %zu\n", part_2_result);
+    std::printf("Part 1: %zu\n", part_1_result);
+    std::printf("Part 2: %zu\n", part_2_result);
 
-  std::free(line);
-  pcre2_match_data_free(match_data);
-  pcre2_code_free(re);
-  std::fclose(fp);
-  return 0;
+    std::free(line);
+    pcre2_match_data_free(match_data);
+    pcre2_code_free(re);
+    std::fclose(fp);
+    return 0;
 }

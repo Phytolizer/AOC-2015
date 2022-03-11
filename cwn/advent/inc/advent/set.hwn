@@ -5,25 +5,25 @@
 
 namespace advent {
 struct Set {
- public:
-  struct Bucket {
-    void* key;
-    std::size_t key_length;
-  };
+  public:
+    struct Bucket {
+        void* key;
+        std::size_t key_length;
+    };
 
- private:
-  static constexpr double kMaxLoad = 0.75;
-  Bucket* FindBucket(Bucket* data, std::size_t capacity, const void* key,
-                     std::size_t key_length) const;
+  private:
+    static constexpr double kMaxLoad = 0.75;
+    Bucket* FindBucket(Bucket* data, std::size_t capacity, const void* key,
+                       std::size_t key_length) const;
 
- public:
-  Bucket* data;
-  std::size_t length;
-  std::size_t capacity;
+  public:
+    Bucket* data;
+    std::size_t length;
+    std::size_t capacity;
 
-  Set();
-  void Free();
-  bool Insert(const void* key, std::size_t key_length);
-  bool IsMember(const void* key, std::size_t key_length) const;
+    Set();
+    void Free();
+    bool Insert(const void* key, std::size_t key_length);
+    bool IsMember(const void* key, std::size_t key_length) const;
 };
-}  // namespace advent
+} // namespace advent

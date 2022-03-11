@@ -1,11 +1,10 @@
 #pragma once
 
 namespace advent {
-template <typename T>
-struct View {
-  T* begin;
-  T* end;
+template <typename T> struct View {
+    T* begin;
+    T* end;
 };
 
 using StringView = View<char>;
-}  // namespace advent
+} // namespace advent

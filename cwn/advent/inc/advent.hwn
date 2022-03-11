@@ -12,7 +12,7 @@
 namespace advent {
 constexpr const auto kInput = internal::constutils::Concat(
     cmake::kCurrentSourceDir, "/", cmake::kTarget, "/input.txt");
-}  // namespace advent
+} // namespace advent
 #endif
 
 namespace advent {
@@ -25,11 +25,11 @@ long StringToLongRange(const char* begin, const char* end, char** endptr,
 long StringToLongRangeChecked(const char* begin, const char* end, int base);
 template <typename T, std::size_t N>
 constexpr std::size_t ArraySize(const T (&)[N]) {
-  return N;
+    return N;
 }
 long MinLongElement(const long* begin, const long* end);
 std::int16_t IntegerLog10(std::uint64_t x);
 void IntegerToString(std::size_t x, char* buffer, std::size_t buffer_length);
 int GetLine(char** buffer, std::size_t* buffer_length, std::FILE* fp);
 bool GetLineVec(Vector<char>* buffer, std::FILE* fp);
-}  // namespace advent
+} // namespace advent

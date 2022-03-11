@@ -6,65 +6,57 @@
 #include "advent/internal/typetraits.hwn"
 
 namespace advent::internal::constutils {
-template <unsigned...>
-struct Seq {
-  using Type = Seq;
-};
+template <unsigned...> struct Seq { using Type = Seq; };
 template <unsigned N, unsigned... Is>
 struct GenSeqX : GenSeqX<N - 1, N - 1, Is...> {};
-template <unsigned... Is>
-struct GenSeqX<0, Is...> : Seq<Is...> {};
-template <unsigned N>
-using GenSeq = typename GenSeqX<N>::Type;
+template <unsigned... Is> struct GenSeqX<0, Is...> : Seq<Is...> {};
+template <unsigned N> using GenSeq = typename GenSeqX<N>::Type;
 
-template <std::size_t S>
-using Size = IntegralConstant<std::size_t, S>;
+template <std::size_t S> using Size = IntegralConstant<std::size_t, S>;
 
-template <class T, std::size_t N>
-constexpr Size<N> Length(const T (&)[N]) {
-  return {};
+template <class T, std::size_t N> constexpr Size<N> Length(const T (&)[N]) {
+    return {};
 }
-template <class T, std::size_t N>
-constexpr Size<N> Length(const Array<T, N>&) {
-  return {};
+template <class T, std::size_t N> constexpr Size<N> Length(const Array<T, N>&) {
+    return {};
 }
 
-template <class T>
-using LengthT = decltype(Length(DeclVal<T>()));
+template <class T> using LengthT = decltype(Length(DeclVal<T>()));
 
-constexpr std::size_t StringSize() { return 0; }
+constexpr std::size_t StringSize() {
+    return 0;
+}
 template <class... Ts>
 constexpr std::size_t StringSize(std::size_t i, Ts... ts) {
-  return (i ? i - 1 : 0) + StringSize(ts...);
+    return (i ? i - 1 : 0) + StringSize(ts...);
 }
-template <class... Ts>
-using StringLength = Size<StringSize(LengthT<Ts>{}...)>;
-template <class... Ts>
-using String = Array<char, StringLength<Ts...>{} + 1>;
+template <class... Ts> using StringLength = Size<StringSize(LengthT<Ts>{}...)>;
+template <class... Ts> using String = Array<char, StringLength<Ts...>{} + 1>;
 
 template <class Lhs, class Rhs, unsigned... I1, unsigned... I2>
 constexpr const String<Lhs, Rhs> ConcatImpl(const Lhs& lhs, const Rhs& rhs,
                                             Seq<I1...>, Seq<I2...>) {
-  return {{lhs[I1]..., rhs[I2]..., '\0'}};
+    return {{lhs[I1]..., rhs[I2]..., '\0'}};
 }
 
 template <class Lhs, class Rhs>
 constexpr const String<Lhs, Rhs> Concat(const Lhs& lhs, const Rhs& rhs) {
-  return ConcatImpl(lhs, rhs, GenSeq<StringLength<Lhs>{}>{},
-                    GenSeq<StringLength<Rhs>{}>{});
+    return ConcatImpl(lhs, rhs, GenSeq<StringLength<Lhs>{}>{},
+                      GenSeq<StringLength<Rhs>{}>{});
 }
 
 template <class T0, class T1, class... Ts>
 constexpr const String<T0, T1, Ts...> Concat(const T0& t0, const T1& t1,
                                              const Ts&... ts) {
-  return Concat(t0, Concat(t1, ts...));
+    return Concat(t0, Concat(t1, ts...));
 }
 
-template <class T>
-constexpr const String<T> Concat(const T& t) {
-  return Concat(t, "");
+template <class T> constexpr const String<T> Concat(const T& t) {
+    return Concat(t, "");
 }
 
-constexpr const String<> Concat() { return Concat(""); }
+constexpr const String<> Concat() {
+    return Concat("");
+}
 
-}  // namespace advent::internal::constutils
+} // namespace advent::internal::constutils

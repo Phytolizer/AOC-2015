@@ -3,35 +3,35 @@
 #include <cstdio>
 
 int main() {
-  std::FILE* fp = std::fopen(advent::kInput.data, "r");
-  if (!fp) {
-    std::printf("Failed to open input file: %s\n", advent::kInput.data);
-    return 1;
-  }
-
-  int c;
-  long floor = 0;
-  std::size_t position = 1;
-  std::size_t underground_position = 0;
-  while ((c = std::fgetc(fp)) != EOF) {
-    switch (c) {
-      case '(':
-        floor++;
-        break;
-      case ')':
-        floor--;
-        if (floor < 0 && underground_position == 0) {
-          underground_position = position;
-        }
-        break;
-      default:
-        break;
+    std::FILE* fp = std::fopen(advent::kInput.data, "r");
+    if (!fp) {
+        std::printf("Failed to open input file: %s\n", advent::kInput.data);
+        return 1;
     }
-    ++position;
-  }
 
-  std::printf("Final floor: %ld\n", floor);
-  std::printf("Position of first basement: %ld\n", underground_position);
-  std::fclose(fp);
-  return 0;
+    int c;
+    long floor = 0;
+    std::size_t position = 1;
+    std::size_t underground_position = 0;
+    while ((c = std::fgetc(fp)) != EOF) {
+        switch (c) {
+        case '(':
+            floor++;
+            break;
+        case ')':
+            floor--;
+            if (floor < 0 && underground_position == 0) {
+                underground_position = position;
+            }
+            break;
+        default:
+            break;
+        }
+        ++position;
+    }
+
+    std::printf("Final floor: %ld\n", floor);
+    std::printf("Position of first basement: %ld\n", underground_position);
+    std::fclose(fp);
+    return 0;
 }

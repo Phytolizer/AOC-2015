@@ -5,89 +5,89 @@
 #include "advent.hwn"
 
 enum struct WhichMover {
-  kSanta,
-  kRoboSanta,
+    kSanta,
+    kRoboSanta,
 };
 
 struct Mover {
-  long x;
-  long y;
+    long x;
+    long y;
 };
 
 int main() {
-  advent::Set visited;
-  advent::Set visited_2;
+    advent::Set visited;
+    advent::Set visited_2;
 
-  Mover part_1_santa = {0, 0};
-  Mover part_2_santa = {0, 0};
-  Mover robo_santa = {0, 0};
-  WhichMover mover = WhichMover::kSanta;
-  visited.Insert(&part_1_santa, sizeof(Mover));
-  visited_2.Insert(&part_2_santa, sizeof(Mover));
+    Mover part_1_santa = {0, 0};
+    Mover part_2_santa = {0, 0};
+    Mover robo_santa = {0, 0};
+    WhichMover mover = WhichMover::kSanta;
+    visited.Insert(&part_1_santa, sizeof(Mover));
+    visited_2.Insert(&part_2_santa, sizeof(Mover));
 
-  std::size_t num_visited = 1;
-  std::size_t num_visited_2 = 1;
+    std::size_t num_visited = 1;
+    std::size_t num_visited_2 = 1;
 
-  std::FILE* fp = std::fopen(advent::kInput.data, "r");
-  if (fp == nullptr) {
-    std::fprintf(stderr, "Failed to open input file: %s\n",
-                 advent::kInput.data);
-    return 1;
-  }
-  int c;
-  while ((c = std::fgetc(fp)) != EOF) {
-    Mover* mx;
-    switch (mover) {
-      case WhichMover::kSanta:
-        mx = &part_2_santa;
-        break;
-      case WhichMover::kRoboSanta:
-        mx = &robo_santa;
-        break;
+    std::FILE* fp = std::fopen(advent::kInput.data, "r");
+    if (fp == nullptr) {
+        std::fprintf(stderr, "Failed to open input file: %s\n",
+                     advent::kInput.data);
+        return 1;
+    }
+    int c;
+    while ((c = std::fgetc(fp)) != EOF) {
+        Mover* mx;
+        switch (mover) {
+        case WhichMover::kSanta:
+            mx = &part_2_santa;
+            break;
+        case WhichMover::kRoboSanta:
+            mx = &robo_santa;
+            break;
+        }
+
+        switch (c) {
+        case '^':
+            ++mx->y;
+            ++part_1_santa.y;
+            break;
+        case 'v':
+            --mx->y;
+            --part_1_santa.y;
+            break;
+        case '<':
+            --mx->x;
+            --part_1_santa.x;
+            break;
+        case '>':
+            ++mx->x;
+            ++part_1_santa.x;
+            break;
+        default:
+            break;
+        }
+
+        if (visited.Insert(&part_1_santa, sizeof(Mover))) {
+            ++num_visited;
+        }
+        if (visited_2.Insert(mx, sizeof(Mover))) {
+            ++num_visited_2;
+        }
+        switch (mover) {
+        case WhichMover::kSanta:
+            mover = WhichMover::kRoboSanta;
+            break;
+        case WhichMover::kRoboSanta:
+            mover = WhichMover::kSanta;
+            break;
+        }
     }
 
-    switch (c) {
-      case '^':
-        ++mx->y;
-        ++part_1_santa.y;
-        break;
-      case 'v':
-        --mx->y;
-        --part_1_santa.y;
-        break;
-      case '<':
-        --mx->x;
-        --part_1_santa.x;
-        break;
-      case '>':
-        ++mx->x;
-        ++part_1_santa.x;
-        break;
-      default:
-        break;
-    }
+    std::printf("Part 1: %zu\n", num_visited);
+    std::printf("Part 2: %zu\n", num_visited_2);
 
-    if (visited.Insert(&part_1_santa, sizeof(Mover))) {
-      ++num_visited;
-    }
-    if (visited_2.Insert(mx, sizeof(Mover))) {
-      ++num_visited_2;
-    }
-    switch (mover) {
-      case WhichMover::kSanta:
-        mover = WhichMover::kRoboSanta;
-        break;
-      case WhichMover::kRoboSanta:
-        mover = WhichMover::kSanta;
-        break;
-    }
-  }
-
-  std::printf("Part 1: %zu\n", num_visited);
-  std::printf("Part 2: %zu\n", num_visited_2);
-
-  std::fclose(fp);
-  visited.Free();
-  visited_2.Free();
-  return 0;
+    std::fclose(fp);
+    visited.Free();
+    visited_2.Free();
+    return 0;
 }

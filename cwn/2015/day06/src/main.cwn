@@ -6,113 +6,114 @@
 #include <cstring>
 
 enum struct Mode {
-  kTurnOn,
-  kTurnOff,
-  kToggle,
+    kTurnOn,
+    kTurnOff,
+    kToggle,
 };
 
 int main() {
-  std::FILE* fp = std::fopen(advent::kInput.data, "r");
-  if (fp == nullptr) {
-    std::printf("Failed to open file: %s\n", advent::kInput.data);
-    return 1;
-  }
-
-  int error_code;
-  std::size_t error_offset;
-  pcre2_code* code = pcre2_compile(
-      (PCRE2_SPTR) R"re((turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+))re",
-      PCRE2_ZERO_TERMINATED, 0, &error_code, &error_offset, nullptr);
-  if (code == nullptr) {
-    PCRE2_UCHAR buffer[256];
-    pcre2_get_error_message(error_code, buffer, sizeof(buffer));
-    std::printf("PCRE2 compilation failed at offset %zu: %s\n", error_offset,
-                buffer);
-    return 1;
-  }
-
-  pcre2_match_data* match_data =
-      pcre2_match_data_create_from_pattern(code, nullptr);
-  if (match_data == nullptr) {
-    std::printf("Failed to create match data\n");
-    return 1;
-  }
-
-  advent::Vector<advent::Vector<bool>> light_field;
-  for (std::size_t i = 0; i < 1000; ++i) {
-    advent::Vector<bool> line;
-    for (std::size_t j = 0; j < 1000; ++j) {
-      line.Push(false);
-    }
-    light_field.Push(line);
-  }
-
-  advent::Vector<char> line;
-  while (advent::GetLineVec(&line, fp)) {
-    if (pcre2_match(code, (PCRE2_SPTR)line.data, PCRE2_ZERO_TERMINATED, 0, 0,
-                    match_data, nullptr) < 0) {
-      std::printf("PCRE2 match failed: %s\n", line.data);
-      return 1;
+    std::FILE* fp = std::fopen(advent::kInput.data, "r");
+    if (fp == nullptr) {
+        std::printf("Failed to open file: %s\n", advent::kInput.data);
+        return 1;
     }
 
-    PCRE2_SIZE* ovector = pcre2_get_ovector_pointer(match_data);
-    Mode mode;
-    char* mode_str = line.data + ovector[2];
-    if (std::strncmp(mode_str, "turn on", ovector[3] - ovector[2]) == 0) {
-      mode = Mode::kTurnOn;
-    } else if (std::strncmp(mode_str, "turn off", ovector[3] - ovector[2]) ==
-               0) {
-      mode = Mode::kTurnOff;
-    } else if (std::strncmp(mode_str, "toggle", ovector[3] - ovector[2]) == 0) {
-      mode = Mode::kToggle;
-    } else {
-      std::fprintf(stderr, "Unreachable code: %.*s\n",
-                   (int)(ovector[3] - ovector[2]), mode_str);
-      return 1;
+    int error_code;
+    std::size_t error_offset;
+    pcre2_code* code = pcre2_compile(
+        (PCRE2_SPTR) R"re((turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+))re",
+        PCRE2_ZERO_TERMINATED, 0, &error_code, &error_offset, nullptr);
+    if (code == nullptr) {
+        PCRE2_UCHAR buffer[256];
+        pcre2_get_error_message(error_code, buffer, sizeof(buffer));
+        std::printf("PCRE2 compilation failed at offset %zu: %s\n",
+                    error_offset, buffer);
+        return 1;
     }
 
-    long start_x = advent::StringToLongRangeChecked(line.data + ovector[4],
-                                                    line.data + ovector[5], 10);
-    long start_y = advent::StringToLongRangeChecked(line.data + ovector[6],
-                                                    line.data + ovector[7], 10);
-    long end_x = advent::StringToLongRangeChecked(line.data + ovector[8],
-                                                  line.data + ovector[9], 10);
-    long end_y = advent::StringToLongRangeChecked(line.data + ovector[10],
-                                                  line.data + ovector[11], 10);
-    for (long x = start_x; x <= end_x; ++x) {
-      for (long y = start_y; y <= end_y; ++y) {
-        switch (mode) {
-          case Mode::kTurnOn:
-            light_field.data[y].data[x] = true;
-            break;
-          case Mode::kTurnOff:
-            light_field.data[y].data[x] = false;
-            break;
-          case Mode::kToggle:
-            light_field.data[y].data[x] = !light_field.data[y].data[x];
-            break;
+    pcre2_match_data* match_data =
+        pcre2_match_data_create_from_pattern(code, nullptr);
+    if (match_data == nullptr) {
+        std::printf("Failed to create match data\n");
+        return 1;
+    }
+
+    advent::Vector<advent::Vector<bool>> light_field;
+    for (std::size_t i = 0; i < 1000; ++i) {
+        advent::Vector<bool> line;
+        for (std::size_t j = 0; j < 1000; ++j) {
+            line.Push(false);
         }
-      }
+        light_field.Push(line);
     }
-  }
 
-  std::size_t total_brightness = 0;
-  for (std::size_t i = 0; i < light_field.length; ++i) {
-    for (std::size_t j = 0; j < light_field.data[i].length; ++j) {
-      if (light_field.data[i].data[j]) {
-        ++total_brightness;
-      }
+    advent::Vector<char> line;
+    while (advent::GetLineVec(&line, fp)) {
+        if (pcre2_match(code, (PCRE2_SPTR)line.data, PCRE2_ZERO_TERMINATED, 0,
+                        0, match_data, nullptr) < 0) {
+            std::printf("PCRE2 match failed: %s\n", line.data);
+            return 1;
+        }
+
+        PCRE2_SIZE* ovector = pcre2_get_ovector_pointer(match_data);
+        Mode mode;
+        char* mode_str = line.data + ovector[2];
+        if (std::strncmp(mode_str, "turn on", ovector[3] - ovector[2]) == 0) {
+            mode = Mode::kTurnOn;
+        } else if (std::strncmp(mode_str, "turn off",
+                                ovector[3] - ovector[2]) == 0) {
+            mode = Mode::kTurnOff;
+        } else if (std::strncmp(mode_str, "toggle", ovector[3] - ovector[2]) ==
+                   0) {
+            mode = Mode::kToggle;
+        } else {
+            std::fprintf(stderr, "Unreachable code: %.*s\n",
+                         (int)(ovector[3] - ovector[2]), mode_str);
+            return 1;
+        }
+
+        long start_x = advent::StringToLongRangeChecked(
+            line.data + ovector[4], line.data + ovector[5], 10);
+        long start_y = advent::StringToLongRangeChecked(
+            line.data + ovector[6], line.data + ovector[7], 10);
+        long end_x = advent::StringToLongRangeChecked(
+            line.data + ovector[8], line.data + ovector[9], 10);
+        long end_y = advent::StringToLongRangeChecked(
+            line.data + ovector[10], line.data + ovector[11], 10);
+        for (long x = start_x; x <= end_x; ++x) {
+            for (long y = start_y; y <= end_y; ++y) {
+                switch (mode) {
+                case Mode::kTurnOn:
+                    light_field.data[y].data[x] = true;
+                    break;
+                case Mode::kTurnOff:
+                    light_field.data[y].data[x] = false;
+                    break;
+                case Mode::kToggle:
+                    light_field.data[y].data[x] = !light_field.data[y].data[x];
+                    break;
+                }
+            }
+        }
     }
-  }
-  std::printf("Total brightness: %zu\n", total_brightness);
 
-  line.Free();
-  for (std::size_t i = 0; i < light_field.length; ++i) {
-    light_field.data[i].Free();
-  }
-  light_field.Free();
-  pcre2_match_data_free(match_data);
-  pcre2_code_free(code);
-  std::fclose(fp);
-  return 0;
+    std::size_t total_brightness = 0;
+    for (std::size_t i = 0; i < light_field.length; ++i) {
+        for (std::size_t j = 0; j < light_field.data[i].length; ++j) {
+            if (light_field.data[i].data[j]) {
+                ++total_brightness;
+            }
+        }
+    }
+    std::printf("Total brightness: %zu\n", total_brightness);
+
+    line.Free();
+    for (std::size_t i = 0; i < light_field.length; ++i) {
+        light_field.data[i].Free();
+    }
+    light_field.Free();
+    pcre2_match_data_free(match_data);
+    pcre2_code_free(code);
+    std::fclose(fp);
+    return 0;
 }

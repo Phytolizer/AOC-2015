@@ -7,4 +7,4 @@ static constexpr std::uint64_t kFnvPrime = 0x00000100000001B3;
 static constexpr std::uint64_t kFnvOffsetBasis = 0xCBF29CE484222325;
 std::uint64_t Hash(const void* key, std::size_t key_length);
 
-}  // namespace advent::internal::hash
+} // namespace advent::internal::hash

@@ -10,75 +10,75 @@
 #include "advent.hwn"
 
 char* advent::ReadEntireFile(const char* filename) {
-  std::FILE* fp = std::fopen(filename, "r");
-  if (!fp) {
-    return nullptr;
-  }
-  std::fseek(fp, 0, SEEK_END);
-  long size = std::ftell(fp);
-  std::fseek(fp, 0, SEEK_SET);
-  char* buffer = (char*)std::malloc(size + 1);
-  std::fread(buffer, 1, size, fp);
-  buffer[size] = '\0';
-  std::fclose(fp);
-  return buffer;
+    std::FILE* fp = std::fopen(filename, "r");
+    if (!fp) {
+        return nullptr;
+    }
+    std::fseek(fp, 0, SEEK_END);
+    long size = std::ftell(fp);
+    std::fseek(fp, 0, SEEK_SET);
+    char* buffer = (char*)std::malloc(size + 1);
+    std::fread(buffer, 1, size, fp);
+    buffer[size] = '\0';
+    std::fclose(fp);
+    return buffer;
 }
 
 char* advent::StringDuplicate(const char* str) {
-  std::size_t size = std::strlen(str);
-  char* buffer = (char*)std::malloc(size + 1);
-  std::strcpy(buffer, str);
-  return buffer;
+    std::size_t size = std::strlen(str);
+    char* buffer = (char*)std::malloc(size + 1);
+    std::strcpy(buffer, str);
+    return buffer;
 }
 
 char* advent::StringDuplicateN(const char* str, std::size_t n) {
-  char* buffer = (char*)std::malloc(n + 1);
-  std::strncpy(buffer, str, n);
-  buffer[n] = '\0';
-  return buffer;
+    char* buffer = (char*)std::malloc(n + 1);
+    std::strncpy(buffer, str, n);
+    buffer[n] = '\0';
+    return buffer;
 }
 
 void* advent::MemoryDuplicate(const void* ptr, std::size_t size) {
-  void* buffer = std::malloc(size);
-  std::memcpy(buffer, ptr, size);
-  return buffer;
+    void* buffer = std::malloc(size);
+    std::memcpy(buffer, ptr, size);
+    return buffer;
 }
 
 long advent::StringToLongRange(const char* begin, const char* end,
                                char** endptr, int base) {
-  char* buffer = StringDuplicateN(begin, end - begin);
-  long result = std::strtol(buffer, endptr, base);
-  // move endptr to point to the original string
-  *endptr = const_cast<char*>(begin + (*endptr - buffer));
-  std::free(buffer);
-  return result;
+    char* buffer = StringDuplicateN(begin, end - begin);
+    long result = std::strtol(buffer, endptr, base);
+    // move endptr to point to the original string
+    *endptr = const_cast<char*>(begin + (*endptr - buffer));
+    std::free(buffer);
+    return result;
 }
 
 long advent::StringToLongRangeChecked(const char* begin, const char* end,
                                       int base) {
-  char* endptr;
-  long result = std::strtol(begin, &endptr, base);
-  if (endptr != end) {
-    assert(end - begin <= std::numeric_limits<int>::max());
-    std::printf("Failed to parse string: '%.*s'\n",
-                static_cast<int>(end - begin), begin);
-    std::exit(1);
-  }
-  return result;
+    char* endptr;
+    long result = std::strtol(begin, &endptr, base);
+    if (endptr != end) {
+        assert(end - begin <= std::numeric_limits<int>::max());
+        std::printf("Failed to parse string: '%.*s'\n",
+                    static_cast<int>(end - begin), begin);
+        std::exit(1);
+    }
+    return result;
 }
 
 long advent::MinLongElement(const long* begin, const long* end) {
-  long min = *begin;
-  for (const long* it = begin + 1; it != end; ++it) {
-    if (*it < min) {
-      min = *it;
+    long min = *begin;
+    for (const long* it = begin + 1; it != end; ++it) {
+        if (*it < min) {
+            min = *it;
+        }
     }
-  }
-  return min;
+    return min;
 }
 
 static constexpr std::uint64_t IntegerLog2(std::uint64_t x) {
-  return 64 - __builtin_clzl(x);
+    return 64 - __builtin_clzl(x);
 }
 
 static constexpr std::uint64_t kIntegerPow10[] = {
@@ -88,64 +88,65 @@ static constexpr std::uint64_t kIntegerPow10[] = {
 };
 
 std::int16_t advent::IntegerLog10(std::uint64_t x) {
-  if (x == 0) {
-    return 0;
-  }
-  constexpr std::int16_t kLog10Estimates[] = {
-      0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4,  5,  5,
-      5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10,
-  };
-  std::int16_t estimated_log10 = kLog10Estimates[IntegerLog2(x)];
-  return estimated_log10 + (std::int16_t)(x >= kIntegerPow10[estimated_log10]);
+    if (x == 0) {
+        return 0;
+    }
+    constexpr std::int16_t kLog10Estimates[] = {
+        0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4,  5,  5,
+        5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10,
+    };
+    std::int16_t estimated_log10 = kLog10Estimates[IntegerLog2(x)];
+    return estimated_log10 +
+           (std::int16_t)(x >= kIntegerPow10[estimated_log10]);
 }
 
 void advent::IntegerToString(std::size_t x, char* buffer,
                              std::size_t buffer_length) {
-  constexpr char kDigits[] = "0123456789";
-  char* p = buffer + buffer_length;
-  do {
-    --p;
-    *p = kDigits[x % 10];
-    x /= 10;
-  } while (x != 0);
+    constexpr char kDigits[] = "0123456789";
+    char* p = buffer + buffer_length;
+    do {
+        --p;
+        *p = kDigits[x % 10];
+        x /= 10;
+    } while (x != 0);
 }
 
 int advent::GetLine(char** buffer, std::size_t* buffer_length, std::FILE* fp) {
-  char* p = *buffer;
-  char* end = *buffer + *buffer_length;
-  int c;
-  while ((c = std::fgetc(fp)) != EOF) {
-    if (p == end) {
-      if (*buffer_length == 0 || *buffer == NULL) {
-        *buffer_length = 16;
-        *buffer = (char*)std::malloc(*buffer_length);
-        p = *buffer;
-      } else {
-        *buffer_length *= 2;
-        *buffer = (char*)std::realloc(*buffer, *buffer_length);
-        p = *buffer + (*buffer_length / 2);
-      }
-      end = *buffer + *buffer_length;
+    char* p = *buffer;
+    char* end = *buffer + *buffer_length;
+    int c;
+    while ((c = std::fgetc(fp)) != EOF) {
+        if (p == end) {
+            if (*buffer_length == 0 || *buffer == NULL) {
+                *buffer_length = 16;
+                *buffer = (char*)std::malloc(*buffer_length);
+                p = *buffer;
+            } else {
+                *buffer_length *= 2;
+                *buffer = (char*)std::realloc(*buffer, *buffer_length);
+                p = *buffer + (*buffer_length / 2);
+            }
+            end = *buffer + *buffer_length;
+        }
+        if (c == '\n') {
+            *p = '\0';
+            return 0;
+        }
+        *p++ = (char)c;
     }
-    if (c == '\n') {
-      *p = '\0';
-      return 0;
-    }
-    *p++ = (char)c;
-  }
-  return -1;
+    return -1;
 }
 
 bool advent::GetLineVec(Vector<char>* buffer, std::FILE* fp) {
-  bool ret = false;
-  int c;
-  while ((c = std::fgetc(fp)) != EOF) {
-    ret = true;
-    if (c == '\n') {
-      buffer->Push('\0');
-      break;
+    bool ret = false;
+    int c;
+    while ((c = std::fgetc(fp)) != EOF) {
+        ret = true;
+        if (c == '\n') {
+            buffer->Push('\0');
+            break;
+        }
+        buffer->Push((char)c);
     }
-    buffer->Push((char)c);
-  }
-  return ret;
+    return ret;
 }

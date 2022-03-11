@@ -9,90 +9,91 @@ static bool IsNice(const char* line);
 static bool IsNice2(advent::StringView line);
 
 int main() {
-  std::FILE* fp = std::fopen(advent::kInput.data, "r");
-  if (fp == nullptr) {
-    std::printf("Failed to open file: %s\n", advent::kInput.data);
-    return 1;
-  }
-
-  char* line = nullptr;
-  std::size_t line_len = 0;
-  std::size_t num_nice = 0;
-  std::size_t num_nice_2 = 0;
-  while (getline(&line, &line_len, fp) != -1) {
-    if (IsNice(line)) {
-      ++num_nice;
+    std::FILE* fp = std::fopen(advent::kInput.data, "r");
+    if (fp == nullptr) {
+        std::printf("Failed to open file: %s\n", advent::kInput.data);
+        return 1;
     }
-    if (IsNice2({line, line + std::strlen(line)})) {
-      ++num_nice_2;
+
+    char* line = nullptr;
+    std::size_t line_len = 0;
+    std::size_t num_nice = 0;
+    std::size_t num_nice_2 = 0;
+    while (getline(&line, &line_len, fp) != -1) {
+        if (IsNice(line)) {
+            ++num_nice;
+        }
+        if (IsNice2({line, line + std::strlen(line)})) {
+            ++num_nice_2;
+        }
     }
-  }
 
-  std::printf("Part 1: %zu\n", num_nice);
-  std::printf("Part 2: %zu\n", num_nice_2);
+    std::printf("Part 1: %zu\n", num_nice);
+    std::printf("Part 2: %zu\n", num_nice_2);
 
-  std::free(line);
-  std::fclose(fp);
-  return 0;
+    std::free(line);
+    std::fclose(fp);
+    return 0;
 }
 
 static bool IsNice(const char* line) {
-  bool has_double = false;
-  bool has_bad_pair = false;
-  std::size_t num_vowels = 0;
-  char pc = '\0';
-  for (std::size_t i = 0; line[i] != '\n' && line[i] != '\0'; ++i) {
-    char c = line[i];
-    if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
-      ++num_vowels;
+    bool has_double = false;
+    bool has_bad_pair = false;
+    std::size_t num_vowels = 0;
+    char pc = '\0';
+    for (std::size_t i = 0; line[i] != '\n' && line[i] != '\0'; ++i) {
+        char c = line[i];
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+            ++num_vowels;
+        }
+        if (pc == c) {
+            has_double = true;
+        }
+        if (pc == 'a' && c == 'b') {
+            has_bad_pair = true;
+        }
+        if (pc == 'c' && c == 'd') {
+            has_bad_pair = true;
+        }
+        if (pc == 'p' && c == 'q') {
+            has_bad_pair = true;
+        }
+        if (pc == 'x' && c == 'y') {
+            has_bad_pair = true;
+        }
+        pc = c;
     }
-    if (pc == c) {
-      has_double = true;
-    }
-    if (pc == 'a' && c == 'b') {
-      has_bad_pair = true;
-    }
-    if (pc == 'c' && c == 'd') {
-      has_bad_pair = true;
-    }
-    if (pc == 'p' && c == 'q') {
-      has_bad_pair = true;
-    }
-    if (pc == 'x' && c == 'y') {
-      has_bad_pair = true;
-    }
-    pc = c;
-  }
-  return has_double && !has_bad_pair && num_vowels >= 3;
+    return has_double && !has_bad_pair && num_vowels >= 3;
 }
 
 static bool HasPair(advent::StringView pool, advent::StringView pair) {
-  char pc = '\0';
-  for (char* c = pool.begin; c < pool.end; ++c) {
-    if (pc == pair.begin[0] && *c == pair.begin[1]) {
-      return true;
+    char pc = '\0';
+    for (char* c = pool.begin; c < pool.end; ++c) {
+        if (pc == pair.begin[0] && *c == pair.begin[1]) {
+            return true;
+        }
+        pc = *c;
     }
-    pc = *c;
-  }
-  return false;
+    return false;
 }
 
 static bool IsNice2(advent::StringView line) {
-  bool has_two_pair = false;
-  for (char* pair_start = line.begin; pair_start < line.end - 1; ++pair_start) {
-    advent::StringView pair{pair_start, pair_start + 2};
-    if (HasPair(advent::StringView{line.begin, pair_start}, pair) ||
-        HasPair(advent::StringView{pair_start + 2, line.end}, pair)) {
-      has_two_pair = true;
-      break;
+    bool has_two_pair = false;
+    for (char* pair_start = line.begin; pair_start < line.end - 1;
+         ++pair_start) {
+        advent::StringView pair{pair_start, pair_start + 2};
+        if (HasPair(advent::StringView{line.begin, pair_start}, pair) ||
+            HasPair(advent::StringView{pair_start + 2, line.end}, pair)) {
+            has_two_pair = true;
+            break;
+        }
     }
-  }
-  bool has_separated_repetition = false;
-  for (char* rep_start = line.begin; rep_start < line.end - 2; ++rep_start) {
-    if (rep_start[0] == rep_start[2]) {
-      has_separated_repetition = true;
-      break;
+    bool has_separated_repetition = false;
+    for (char* rep_start = line.begin; rep_start < line.end - 2; ++rep_start) {
+        if (rep_start[0] == rep_start[2]) {
+            has_separated_repetition = true;
+            break;
+        }
     }
-  }
-  return has_two_pair && has_separated_repetition;
+    return has_two_pair && has_separated_repetition;
 }

@@ -1,32 +1,25 @@
 #pragma once
 
 namespace advent::internal {
-template <typename T>
-struct TypeIdentity {
-  using Type = T;
-};
+template <typename T> struct TypeIdentity { using Type = T; };
 
-template <typename T>
-TypeIdentity<T&&> TryAddRvalueReference(int);
-template <typename T>
-TypeIdentity<T> TryAddRvalueReference(...);
+template <typename T> TypeIdentity<T&&> TryAddRvalueReference(int);
+template <typename T> TypeIdentity<T> TryAddRvalueReference(...);
 
 template <typename T>
 struct AddRvalueReference : decltype(TryAddRvalueReference<T>(0)) {};
 
-template <typename T, T V>
-struct IntegralConstant {
-  using Type = IntegralConstant;
-  using ValueType = T;
-  static constexpr ValueType kValue = V;
-  constexpr operator ValueType() const { return kValue; }
+template <typename T, T V> struct IntegralConstant {
+    using Type = IntegralConstant;
+    using ValueType = T;
+    static constexpr ValueType kValue = V;
+    constexpr operator ValueType() const {
+        return kValue;
+    }
 };
 
-template <typename T, typename U = T&&>
-U DeclValInternal(int);
-template <typename T>
-T DeclValInternal(long);
+template <typename T, typename U = T&&> U DeclValInternal(int);
+template <typename T> T DeclValInternal(long);
 
-template <typename T>
-decltype(DeclValInternal<T>(0)) DeclVal();
-}  // namespace advent::internal
+template <typename T> decltype(DeclValInternal<T>(0)) DeclVal();
+} // namespace advent::internal
